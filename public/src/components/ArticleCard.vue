@@ -3,19 +3,25 @@
         <img :src="article.img" alt="Картинка">
         <h2>{{ article.title }}</h2>
         <p>{{ article.anons }}</p>
-        <button @click="$emit('readMore', article)">Читать детальнее</button>
+        <button @click="goToDetails">Читать детальнее</button>
     </div>
 </template>
 
 <script>
 export default {
-    name: "ArticleCard",
-    props: {
-        article: {
-            type: Object,
-            required: true 
-        }
+  name: "ArticleCard",
+  props: {
+    article: {
+      type: Object,
+      required: true 
     }
+  },
+  methods: {
+    goToDetails() {
+      sessionStorage.setItem('scrollPosition', Math.round(window.scrollY.toString()));
+      this.$router.push(`/articles/${this.article._id}`);
+    }
+  }
 }
 </script>
 

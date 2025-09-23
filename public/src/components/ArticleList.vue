@@ -1,27 +1,37 @@
 <template>
-    <section id="articleList" ref="listRoot">
+    <section id="articleList">
         <ArticleCard  
         v-for="el in articles" 
         :key="el._id" 
         :article="el"
-        @readMore="$emit('readMore', el)"
         />
     </section>
 </template>
 
 <script>
-import ArticleCard from './ArticleCard.vue';
+import ArticleCard from './ArticleCard.vue'
+import axios from "axios"
 export default {
     name: "ArticleList",
-    props: {
-        articles: {
-            type: Array,
-            required: true
-        }
-    },
     components: {
         ArticleCard
-    }
+    },
+    data() {
+        return {
+            articles: []
+        }
+  },
+  async mounted() {
+    const result = await axios.get("/api/articles")
+    this.articles = result.data
+    this.$nextTick(() => {
+        const savedScroll = parseInt(sessionStorage.getItem('scrollPosition')) || 0;
+        if (savedScroll) {
+          window.scrollTo({ top: savedScroll });
+          sessionStorage.removeItem('scrollPosition');
+        }
+    });
+  }
 }
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <section id="articleDetails">
     <div class="stickyContainer">
-      <button @click="$emit('goBack')">Назад ко всем статьям</button>
+      <button @click="$router.push('/')">Назад ко всем статьям</button>
     </div>
     <div id="articleContent">
       <img :src="article.img" alt="Картинка">
@@ -25,28 +25,37 @@ export default {
     LeaveCommentForm
   },
   props: {
-    article: {
-      type: Object,
+    id: {
+      type: String,
       required: true 
     }
   },
   data() {
     return {
+      article: null,
       comments: []
     }
   },
   async mounted() {
-    const result = await axios.get("api/comments", {
-      params: {
-        article_id: this.article._id
-      }
-    })
-    this.comments = result.data;
+    try {
+      const articleRes = await axios.get(`/api/articles/${this.id}`);
+      this.article = articleRes.data;
+      const commentsRes = await axios.get('/api/comments', {
+        params: { article_id: this.article._id }
+      });
+      this.comments = commentsRes.data;
+    } catch (err) {
+      console.error("Ошибка при загрузке статьи или комментариев:", err);
+    }
+    this.$nextTick(() => {
+    const el = this.$el;
+    el.scrollIntoView();
+  });
   },
   methods: {
     async submitComment(commentData) {
       try {
-        const result = await axios.post("api/comments", commentData);
+        const result = await axios.post("/api/comments", commentData);
         this.comments.unshift(result.data);
       } 
       catch (err) {

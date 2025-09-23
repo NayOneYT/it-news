@@ -13,5 +13,5 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/articles", ArticlesRouter);
 app.use("/api/comments", CommentsRouter);
 app.listen(PORT, () => {
-    console.log("Сервер запущен");
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
 });

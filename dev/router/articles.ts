@@ -15,4 +15,14 @@ router.get("/", async (req, res) => {
     }
 })
 
+router.get("/:id", async (req, res) => {
+  try {
+    const article = await Articles.findById(req.params.id);
+    res.status(200).send(article);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Ошибка сервера" });
+  }
+});
+
 export const ArticlesRouter = router

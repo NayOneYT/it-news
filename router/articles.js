@@ -22,4 +22,14 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500);
     }
 }));
+router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const article = yield Articles.findById(req.params.id);
+        res.status(200).send(article);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send({ message: "Ошибка сервера" });
+    }
+}));
 export const ArticlesRouter = router;
