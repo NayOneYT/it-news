@@ -4,7 +4,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
     proxy: {
-      "api": {
+      "/api": {
         target: process.env.BASE_API_URL
       }
     }
