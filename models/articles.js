@@ -15,12 +15,17 @@ const articles = new Schema({
     img: {
         type: String,
         required: false,
-        default: ""
+        default: "/img/no-image.jpg"
     },
     published: {
         type: Date,
         required: true,
         default: Date.now
+    },
+    status: {
+        type: String,
+        required: false,
+        default: "moderation"
     }
 });
 export const Articles = model("articles", articles);

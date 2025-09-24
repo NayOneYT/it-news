@@ -4,7 +4,7 @@
       <button @click="$router.push('/')">Назад ко всем статьям</button>
     </div>
     <div id="articleContent" v-if="article">
-      <img :src="article.img" alt="Картинка">
+      <img :src="article.img" alt="Картинка" v-if="isOriginalImage">
       <h2>{{ article.title }}</h2>
       <p>{{ article.anons }}</p>
       <div id="fullText" v-html="article.full_text"></div>
@@ -33,13 +33,15 @@ export default {
   data() {
     return {
       article: null,
-      comments: []
+      comments: [],
+      isOriginalImage: false
     }
   },
   async mounted() {
     try {
       const articleRes = await axios.get(`/api/articles/${this.id}`);
       this.article = articleRes.data;
+      if (this.article.img != "/img/no-image.jpg") this.isOriginalImage = true
       const commentsRes = await axios.get('/api/comments', {
         params: { article_id: this.article._id }
       });
