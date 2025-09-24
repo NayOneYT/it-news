@@ -28,7 +28,6 @@ export default {
 <style scoped>
 .article {
   width: 450px;
-  margin: 40px;
   background-color: rgba(230, 230, 230, 0.7);
   border-radius: 10px;
   border: 1px solid black;

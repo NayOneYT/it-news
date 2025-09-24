@@ -1,6 +1,6 @@
 <template>
   <section id="articleDetails">
-    <div class="stickyContainer">
+    <div class="stickyContainer" :style="article ? {} : { width: '90%', margin: '0 auto', flex: 'unset' }">
       <button @click="$router.push('/')">Назад ко всем статьям</button>
     </div>
     <div id="articleContent" v-if="article">
