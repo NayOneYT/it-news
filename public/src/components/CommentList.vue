@@ -11,7 +11,7 @@ export default {
     name: "CommentList",
     props: {
         comments: {
-            type: Object,
+            type: Array,
             required: true
         }
     },

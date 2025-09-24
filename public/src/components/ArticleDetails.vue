@@ -3,7 +3,7 @@
     <div class="stickyContainer">
       <button @click="$router.push('/')">Назад ко всем статьям</button>
     </div>
-    <div id="articleContent">
+    <div id="articleContent" v-if="article">
       <img :src="article.img" alt="Картинка">
       <h2>{{ article.title }}</h2>
       <p>{{ article.anons }}</p>
