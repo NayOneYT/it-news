@@ -30,7 +30,7 @@ export default {
       anons: '',
       full_text: '',
       img: null,
-      imgError: false,
+      imgError: false
     };
   },
   mounted() {
@@ -46,10 +46,18 @@ export default {
         e.preventDefault()
     },
     preventKeys(e) {
-        const keys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
-        if (keys.includes(e.keyCode)) {
-            e.preventDefault()
-        }
+      const tag = e.target.tagName.toLowerCase();
+      const isTextInput = (tag === 'input' || tag === 'textarea');
+      let keys
+      if (isTextInput) {
+        keys = [33, 34, 35, 36]
+      }
+      else {
+        keys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
+      }
+      if (keys.includes(e.keyCode)) {
+          e.preventDefault()
+      }
     },
     handleFile(event) {
       const file = event.target.files[0]
@@ -62,26 +70,24 @@ export default {
       this.img = file
     },
     async submitArticle() {
-      if (!this.imgError) {
-        const formData = new FormData();
-        formData.append('title', this.title);
-        formData.append('anons', this.anons);
-        formData.append('full_text', this.full_text);
-        if (this.img) {
-          formData.append('img', this.img);
-        }
-        try {
-          const res = await fetch('/api/create-article', {
-            method: 'POST',
-            body: formData
-          });
-          await res.json();
-          alert('Статья создана!');
-          this.$emit('close');
-        } 
-        catch (err) {
-          console.error('Ошибка при создании статьи:', err);
-        }
+      const formData = new FormData();
+      formData.append('title', this.title);
+      formData.append('anons', this.anons);
+      formData.append('full_text', this.full_text);
+      if (this.img) {
+        formData.append('img', this.img);
+      }
+      try {
+        const res = await fetch('/api/create-article', {
+          method: 'POST',
+          body: formData
+        });
+        await res.json();
+        alert('Статья создана!');
+        this.$emit('close');
+      } 
+      catch (err) {
+        console.error('Ошибка при создании статьи:', err);
       }
     }
   }
@@ -108,7 +114,7 @@ export default {
   border-radius: 10px;
   width: 500px;
   max-width: 90%;
-  box-shadow: 0 0 30px black;
+  box-shadow: 0 0 50px black;
 }
 
 h2 {
