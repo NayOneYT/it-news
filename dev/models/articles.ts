@@ -11,7 +11,7 @@ const articles = new Schema({
     },
     full_text: {
         type: String,
-        required: true
+        required: false
     },
     img: {
         type: String,

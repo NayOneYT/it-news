@@ -3,17 +3,27 @@
     <div class="articleContent">
       <form @submit.prevent="submitArticle">
         <h2>Добавление статьи</h2>
-        <input type="text" v-model="title" placeholder="Заголовок">
-        <textarea v-model="anons" placeholder="Анонс"></textarea>
-        <textarea v-model="full_text" placeholder="Полный текст (HTML)"></textarea>
-        <input type="file" @change="handleFile" accept="image/*">
+        <input type="text" v-model="title.content" placeholder="Заголовок">
         <transition name="fade-out">
-          <div class="inputError" v-if="imgError">
-            <p>Выберите изображение</p>
+          <div class="inputError" v-if="title.error">
+            <p>Введите заголовок длиннее 10 символов</p>
+          </div>
+        </transition>
+        <textarea v-model="anons.content" placeholder="Анонс"></textarea>
+        <transition name="fade-out">
+          <div class="inputError" v-if="anons.error">
+            <p>Введите анонс длиннее 10 символов</p>
+          </div>
+        </transition>
+        <textarea v-model="full_text" placeholder="Полный текст (HTML)"></textarea>
+        <input type="file" @change="handleImg" accept="image/*">
+        <transition name="fade-out">
+          <div class="inputError" v-if="img.error">
+            <p>Можно выбрать только изображение</p>
           </div>
         </transition>
         <div class="btns">
-          <button type="submit">Создать статью</button>
+          <button type="submit">Отправить</button>
           <button type="button" @click="$emit('close')">Отмена</button>
         </div>
       </form>
@@ -22,15 +32,25 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: "CreateArticle",
   data() {
     return {
-      title: '',
-      anons: '',
+      title: {
+        content: "",
+        error: false
+      },
+      anons: {
+        content: "",
+        error: false
+      },
       full_text: '',
-      img: null,
-      imgError: false
+      img: 
+      {
+        data: null,
+        error: false
+      }
     };
   },
   mounted() {
@@ -50,44 +70,61 @@ export default {
       const isTextInput = (tag === 'input' || tag === 'textarea');
       let keys
       if (isTextInput) {
-        keys = [33, 34, 35, 36]
+        keys = [33, 34] 
+        // 33 - PageUp, 34 - PageDown
       }
       else {
-        keys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
+        keys = [32, 33, 34, 35, 36, 37, 38, 39, 40]; 
+        // 32 - Space, 33 - PageUp, 34 - PageDown, 35 - End, 36 - Home, 
+        // 37 - ArrowLeft, 38 - ArrowUp, 39 - ArrowRight, 40 - ArrowDown
       }
       if (keys.includes(e.keyCode)) {
           e.preventDefault()
       }
     },
-    handleFile(event) {
+    handleImg(event) {
       const file = event.target.files[0]
       if (!file.type.startsWith('image/')) {
-        this.imgError = true
+        this.img.error = true
+        setTimeout(() => {
+          this.img.error = false
+        }, 3000)
+        this.img.data = null
         event.target.value = ''
         return
       }
-      this.imgError = false
-      this.img = file
+      this.img.error = false
+      this.img.data = file
     },
     async submitArticle() {
-      const formData = new FormData();
-      formData.append('title', this.title);
-      formData.append('anons', this.anons);
-      formData.append('full_text', this.full_text);
-      if (this.img) {
-        formData.append('img', this.img);
-      }
-      try {
-        const res = await fetch('/api/create-article', {
-          method: 'POST',
-          body: formData
-        });
-        await res.json();
-        alert('Статья создана!');
-        this.$emit('close');
+      const formattedTitle = this.title.content.trim().replace(/\s+/g, ' ')
+      const isTitleValid = formattedTitle.length > 10
+      const formattedAnons = this.anons.content.trim().replace(/\s+/g, ' ')
+      const isAnonsValid = formattedAnons.length > 10
+      if (isTitleValid && isAnonsValid) {
+        this.title.error = false
+        this.anons.error = false
+        try {
+          const formData = new FormData()
+          formData.append('title', formattedTitle)
+          formData.append('anons', formattedAnons)
+          formData.append('full_text', this.full_text)
+          if (this.img.data) {
+            formData.append('img', this.img.data)
+          }
+          const res = await axios.post('/api/create-article', formData)
+          console.log(res.data)
+          this.$emit('close')
+        } 
+        catch (err) {
+          console.error('Ошибка при создании статьи:', err)
+        }
       } 
-      catch (err) {
-        console.error('Ошибка при создании статьи:', err);
+      else {
+        if (!isTitleValid) this.title.error = true 
+        else this.title.error = false
+        if (!isAnonsValid) this.anons.error = true
+        else this.anons.error = false
       }
     }
   }
@@ -136,6 +173,7 @@ form textarea {
   resize: vertical;
   height: 56px;
   min-height: 56px;
+  max-height: 15vh;
 }
 
 .btns {
