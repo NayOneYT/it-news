@@ -98,8 +98,7 @@ export default {
       const isTitleValid = formattedTitle.length > 10
       const formattedAnons = this.anons.content.trim().replace(/\s+/g, ' ')
       const isAnonsValid = formattedAnons.length > 10
-      const cleanedFullText = this.full_text.replace(/&nbsp;/gi, '').trim()
-      const fullTextToSend = cleanedFullText.length === 0 ? '' : this.full_text
+      const fullTextToSend = this.full_text.trim() == '' ? '' : this.full_text
       if (isTitleValid && isAnonsValid) {
         this.title.error = false
         this.anons.error = false
