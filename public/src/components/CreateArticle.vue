@@ -98,6 +98,8 @@ export default {
       const isTitleValid = formattedTitle.length > 10
       const formattedAnons = this.anons.content.trim().replace(/\s+/g, ' ')
       const isAnonsValid = formattedAnons.length > 10
+      const cleanedFullText = this.full_text.replace(/&nbsp;/gi, '').trim()
+      const fullTextToSend = cleanedFullText.length === 0 ? '' : this.full_text
       if (isTitleValid && isAnonsValid) {
         this.title.error = false
         this.anons.error = false
@@ -105,7 +107,7 @@ export default {
           const formData = new FormData()
           formData.append('title', formattedTitle)
           formData.append('anons', formattedAnons)
-          formData.append('full_text', this.full_text)
+          formData.append('full_text', fullTextToSend)
           if (this.img.data) {
             formData.append('img', this.img.data)
           }
