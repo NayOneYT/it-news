@@ -36,7 +36,7 @@ export default {
     }
   },
   async mounted() {
-    const result = await axios.get("/api/articles")
+    const result = await axios.get("/api/articles/approved")
     this.articles = result.data
     this.$nextTick(() => {
       const savedScroll = parseInt(sessionStorage.getItem('scrollPosition')) || 0;

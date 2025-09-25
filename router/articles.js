@@ -13,7 +13,19 @@ const router = Router();
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const getArticles = yield Articles.find().sort({ published: -1 });
-        if (!getArticles)
+        if (getArticles.length == 0)
+            throw new Error("No items");
+        res.status(200).send(getArticles);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+    }
+}));
+router.get("/approved", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const getArticles = yield Articles.find({ status: "approved" }).sort({ published: -1 });
+        if (getArticles.length == 0)
             throw new Error("No items");
         res.status(200).send(getArticles);
     }

@@ -4,15 +4,27 @@ import { Articles } from "../models/articles.js"
 const router = Router()
 
 router.get("/", async (req, res) => {
-    try {
-        const getArticles = await Articles.find().sort({published: -1})
-        if (!getArticles) throw new Error("No items")
-        res.status(200).send(getArticles)
-    }
-    catch(err) {
-        console.log(err)
-        res.status(500)
-    }
+  try {
+    const getArticles = await Articles.find().sort({published: -1})
+    if (getArticles.length == 0) throw new Error("No items")
+    res.status(200).send(getArticles)
+  }
+  catch(err) {
+    console.log(err)
+    res.status(500)
+  }
+})
+
+router.get("/approved", async (req, res) => {
+  try {
+    const getArticles = await Articles.find({ status: "approved" }).sort({published: -1})
+    if (getArticles.length == 0) throw new Error("No items")
+    res.status(200).send(getArticles)
+  }
+  catch(err) {
+    console.log(err)
+    res.status(500)
+  }
 })
 
 router.get("/:id", async (req, res) => {
@@ -23,6 +35,6 @@ router.get("/:id", async (req, res) => {
     console.error(err);
     res.status(500).send({ message: "Ошибка сервера" });
   }
-});
+})
 
 export const ArticlesRouter = router
