@@ -3,7 +3,7 @@
         <img :src="article.img" alt="Картинка" @error="onImageError">
         <h2>{{ article.title }}</h2>
         <p>{{ article.anons }}</p>
-        <button @click="goToDetails">Читать детальнее</button>
+        <button v-if="article.full_text != ''" @click="goToDetails">Читать детальнее</button>
     </div>
 </template>
 
