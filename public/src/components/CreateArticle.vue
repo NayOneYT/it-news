@@ -1,7 +1,7 @@
 <template>
   <div id="createArticle" @click.self="$emit('close')">
     <div class="articleContent">
-      <form @submit.prevent="submitArticle">
+      <form @submit.prevent="submitArticle" v-if="!submitted">
         <h2>Добавление статьи</h2>
         <input type="text" v-model="title.content" placeholder="Заголовок">
         <transition name="fade-out">
@@ -22,11 +22,11 @@
             <p>Можно выбрать только изображение</p>
           </div>
         </transition>
-        <div class="btns">
-          <button type="submit">Отправить</button>
-          <button type="button" @click="$emit('close')">Отмена</button>
-        </div>
+        <button type="submit">Отправить</button>
       </form>
+      <div v-else>
+        <h3>Статья отправлена на модерацию!</h3>
+      </div>
     </div>
   </div>
 </template>
@@ -50,7 +50,8 @@ export default {
       {
         data: null,
         error: false
-      }
+      },
+      submitted: false
     };
   },
   mounted() {
@@ -112,9 +113,8 @@ export default {
           if (this.img.data) {
             formData.append('img', this.img.data)
           }
-          const res = await axios.post('/api/create-article', formData)
-          console.log(res.data)
-          this.$emit('close')
+          await axios.post('/api/create-article', formData)
+          this.submitted = true
         } 
         catch (err) {
           console.error('Ошибка при создании статьи:', err)
@@ -154,6 +154,14 @@ export default {
   box-shadow: 0 0 50px black;
 }
 
+h3 {
+  width: 100%;
+  font-size: 30px;
+  text-align: center;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 h2 {
     padding-bottom: 15px;
 }
@@ -176,40 +184,28 @@ form textarea {
   max-height: 15vh;
 }
 
-.btns {
+.header {
   display: flex;
   justify-content: space-between;
 }
 
-button {
-  width: 40%;
+button[type="submit"] {
+  width: 90%;
   padding: 12px;
-  margin: 0 10px;
+  margin-left: 5%;
   font-size: 20px;
   color: white;
   font-weight: 500;
   border: none;
+  background-color: #222222;
   border-radius: 10px;
   cursor: pointer;
   transition: all 300ms ease;
 }
 
-button[type="submit"] {
-  background-color: #222222;
-}
-
 button[type="submit"]:hover {
   transform: scale(1.1);
   background-color: #000;
-}
-
-button[type="button"] {
-  background-color: #ff3434;
-}
-
-button[type="button"]:hover {
-  transform: scale(1.1);
-  background-color: #c02121;
 }
 
 .inputError p {

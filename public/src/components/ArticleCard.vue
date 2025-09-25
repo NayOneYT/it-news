@@ -1,6 +1,6 @@
 <template>
     <div class="article">
-        <img :src="article.img" alt="Картинка">
+        <img :src="article.img" alt="Картинка" @error="onImageError">
         <h2>{{ article.title }}</h2>
         <p>{{ article.anons }}</p>
         <button @click="goToDetails">Читать детальнее</button>
@@ -17,6 +17,9 @@ export default {
     }
   },
   methods: {
+    onImageError(event) {
+      event.target.src = '/img/no-image.jpg';
+    },
     goToDetails() {
       sessionStorage.setItem('scrollPosition', Math.round(window.scrollY.toString()));
       this.$router.push(`/articles/${this.article._id}`);

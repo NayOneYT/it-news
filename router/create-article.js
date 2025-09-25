@@ -35,7 +35,7 @@ router.post("/", upload.single('img'), (req, res) => __awaiter(void 0, void 0, v
             savedArticle.img = `/img/${fileName}`;
             yield savedArticle.save();
         }
-        res.status(201).send("Статья отправлена на модерацию");
+        res.status(201).send({ message: "Статья отправлена на модерацию" });
     }
     catch (err) {
         console.error(err);

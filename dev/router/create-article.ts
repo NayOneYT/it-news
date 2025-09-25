@@ -28,7 +28,7 @@ router.post("/", upload.single('img'), async (req, res) => {
       savedArticle.img = `/img/${fileName}`
       await savedArticle.save()
     }
-    res.status(201).send("Статья отправлена на модерацию")
+    res.status(201).send({ message: "Статья отправлена на модерацию" })
   } 
   catch (err) {
     console.error(err)
