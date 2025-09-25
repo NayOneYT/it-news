@@ -3,23 +3,16 @@
     <h2>Оставьте комментарий</h2>
     <form @submit.prevent="handleSubmit">
       <input type="text" v-model="comment.name" placeholder="Введите имя">
-      <transition name="fade-out">
-        <div class="inputError" v-if="nameError">
-          <p>Имя слишком короткое</p>
-        </div>
-      </transition>
+      <InputError :condition="nameError" :text="'Имя слишком короткое'"/>
       <textarea v-model="comment.text" placeholder="Введите комментарий"></textarea>
-      <transition name="fade-out">
-        <div class="inputError" v-if="textError">
-          <p>Введите больше текста</p>
-        </div>
-      </transition>
+      <InputError :condition="textError" :text="'Введите больше текста'"/>
       <button type="submit">Отправить</button>
     </form>
   </section>
 </template>
 
 <script>
+import InputError from './InputError.vue'
 export default {
   name: "LeaveCommentForm",
   props: {
@@ -27,6 +20,9 @@ export default {
       type: String,
       required: true
     }
+  },
+  components: {
+    InputError
   },
   data() {
     return {
@@ -62,10 +58,14 @@ h2 {
   padding: 15px;
   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
 }
+form {
+  width: calc(100%-60px);
+  margin: 0 30px;
+}
 form input, form textarea {
   display: block;
-  width: calc(100% - 60px);
-  margin: 0 30px 20px;
+  width: 100%;
+  margin-bottom: 20px;
   padding: 15px 20px;
   border-radius: 10px;
   border: 1px solid black;
@@ -96,29 +96,5 @@ form button {
 form button:hover {
   transform: scale(1.1);
   background-color: #000000;
-}
-
-form .inputError p {
-  width: calc(100% - 60px);
-  margin: -10px 30px 20px;
-  padding: 10px;
-  background-color: rgba(255, 0, 0, 0.3);
-  border-radius: 10px;
-  box-sizing: border-box;
-  color: rgb(150, 0, 0);
-}
-
-.fade-out-leave-from {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.fade-out-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-.fade-out-leave-active {
-  transition: all 0.3s ease;
 }
 </style>

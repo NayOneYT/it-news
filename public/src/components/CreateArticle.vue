@@ -4,24 +4,12 @@
       <form @submit.prevent="submitArticle" v-if="!submitted">
         <h2>Добавление статьи</h2>
         <input type="text" v-model="title.content" placeholder="Заголовок">
-        <transition name="fade-out">
-          <div class="inputError" v-if="title.error">
-            <p>Введите заголовок длиннее 10 символов</p>
-          </div>
-        </transition>
+        <InputError :condition="title.error" :text="'Введите заголовок длиннее 10 символов'"/>
         <textarea v-model="anons.content" placeholder="Анонс"></textarea>
-        <transition name="fade-out">
-          <div class="inputError" v-if="anons.error">
-            <p>Введите анонс длиннее 10 символов</p>
-          </div>
-        </transition>
+        <InputError :condition="anons.error" :text="'Введите анонс длиннее 10 символов'"/>
         <textarea v-model="full_text" placeholder="Полный текст (HTML)"></textarea>
         <input type="file" @change="handleImg" accept="image/*">
-        <transition name="fade-out">
-          <div class="inputError" v-if="img.error">
-            <p>Можно выбрать только изображение</p>
-          </div>
-        </transition>
+        <InputError :condition="img.error" :text="'Можно выбрать только изображение'"/>
         <button type="submit">Отправить</button>
       </form>
       <div v-else>
@@ -33,8 +21,12 @@
 
 <script>
 import axios from 'axios'
+import InputError from './InputError.vue'
 export default {
   name: "CreateArticle",
+  components: {
+    InputError
+  },
   data() {
     return {
       title: {
@@ -93,7 +85,7 @@ export default {
         this.img.error = true
         setTimeout(() => {
           this.img.error = false
-        }, 3000)
+        }, 5000)
         this.img.data = null
         event.target.value = ''
         return
@@ -153,7 +145,7 @@ export default {
   background-color: #fff;
   padding: 30px;
   border-radius: 10px;
-  width: 500px;
+  width: 30%;
   max-width: 90%;
   box-shadow: 0 0 50px black;
 }
@@ -173,7 +165,7 @@ h2 {
 form input, form textarea {
   display: block;
   width: 100%;
-  margin: 0 0 20px;
+  margin-bottom: 20px;
   padding: 15px 20px;
   border-radius: 10px;
   border: 1px solid black;
@@ -210,29 +202,5 @@ button[type="submit"] {
 button[type="submit"]:hover {
   transform: scale(1.1);
   background-color: #000;
-}
-
-.inputError p {
-  width: 100%;
-  margin: -10px 0 10px;
-  padding: 10px;
-  background-color: rgba(255, 0, 0, 0.3);
-  border-radius: 10px;
-  box-sizing: border-box;
-  color: rgb(150, 0, 0);
-}
-
-.fade-out-leave-from {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.fade-out-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-.fade-out-leave-active {
-  transition: all 0.3s ease;
 }
 </style>
