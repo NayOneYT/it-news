@@ -52,7 +52,7 @@ export default {
         error: false
       },
       submitted: false
-    };
+    }
   },
   mounted() {
     window.addEventListener('wheel', this.preventScroll, { passive: false })
@@ -64,18 +64,22 @@ export default {
   },
   methods: {
     preventScroll(e) {
-        e.preventDefault()
+      const target = e.target
+      if (target.tagName === 'TEXTAREA') {
+        if (target.scrollHeight > target.clientHeight) return
+      }
+      e.preventDefault()
     },
     preventKeys(e) {
-      const tag = e.target.tagName.toLowerCase();
-      const isTextInput = (tag === 'input' || tag === 'textarea');
+      const tag = e.target.tagName
+      const isTextInput = (tag === 'INPUT' || tag === 'TEXTAREA')
       let keys
       if (isTextInput) {
         keys = [33, 34] 
         // 33 - PageUp, 34 - PageDown
       }
       else {
-        keys = [32, 33, 34, 35, 36, 37, 38, 39, 40]; 
+        keys = [32, 33, 34, 35, 36, 37, 38, 39, 40]
         // 32 - Space, 33 - PageUp, 34 - PageDown, 35 - End, 36 - Home, 
         // 37 - ArrowLeft, 38 - ArrowUp, 39 - ArrowRight, 40 - ArrowDown
       }
@@ -128,7 +132,7 @@ export default {
       }
     }
   }
-};
+}
 </script>
 
 <style scoped>
