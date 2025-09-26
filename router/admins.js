@@ -19,17 +19,17 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const password = req.body.password;
         const admin = yield Admins.findOne({ login: login });
         if (!admin) {
-            return res.status(401).send({ message: "Неверный логин или пароль" });
+            return res.status(401).send({ error: true });
         }
         const isPassValid = yield bcrypt.compare(password, admin.password);
         if (!isPassValid) {
-            return res.status(401).send({ message: "Неверный логин или пароль" });
+            return res.status(401).send({ error: true });
         }
         const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, { expiresIn: "12h" });
         res.status(200).send({ token });
     }
     catch (err) {
-        res.status(500).json({ message: "Ошибка сервера" });
+        res.status(500);
     }
 }));
 function authAdmin(req, res, next) {

@@ -13,11 +13,11 @@ router.post("/login", async (req, res) => {
         const password = req.body.password
         const admin = await Admins.findOne({ login: login })
         if (!admin) {
-            return res.status(401).send({ message: "Неверный логин или пароль" })
+            return res.status(401).send({ error: true })
         }
         const isPassValid = await bcrypt.compare(password, admin.password)
         if (!isPassValid) {
-            return res.status(401).send({ message: "Неверный логин или пароль" })
+            return res.status(401).send({ error: true })
         }
         const token = jwt.sign(
             { id: admin._id },
@@ -27,7 +27,7 @@ router.post("/login", async (req, res) => {
         res.status(200).send({ token })
     } 
     catch (err) {
-        res.status(500).json({ message: "Ошибка сервера" })
+        res.status(500)
     }
 })
 

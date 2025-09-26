@@ -5,6 +5,7 @@
         <h2>Авторизация администратора</h2>
         <input type="text" v-model="login" placeholder="Логин">
         <input type="password" v-model="password" placeholder="Пароль">
+        <InputError :condition="error" :text="'Неверный логин или пароль'"/>
         <button type="submit">Войти</button>
       </form>
     </div>
@@ -12,17 +13,18 @@
 </template>
 
 <script>
-// import axios from 'axios'
-// import InputError from './InputError.vue'
+import axios from 'axios'
+import InputError from './InputError.vue'
 export default {
   name: "AdminAuth",
-//   components: {
-//     InputError
-//   },
+  components: {
+    InputError
+  },
   data() {
     return {
       login: "",
-      password: ""
+      password: "",
+      error: false
     }
   },
   mounted() {
@@ -55,7 +57,19 @@ export default {
       }
     },
     async submitAuth() {
-      
+      try {
+        const res = await axios.post("/api/admin/login", {
+          login: this.login,
+          password: this.password,
+        })
+        localStorage.setItem("token", res.data.token)
+        this.error = false
+        this.$emit("close")
+        this.$router.push("/admin")
+      } 
+      catch (err) {
+        this.error = err.response.data.error
+      }
     }
   }
 }
