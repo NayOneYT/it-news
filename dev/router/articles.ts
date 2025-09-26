@@ -1,6 +1,7 @@
 import { Router } from "express"
 import type { Request, Response, NextFunction } from "express"
 import { Articles } from "../models/articles.js"
+import { Comments } from "../models/comments.js"
 import jwt from "jsonwebtoken"
 import path from "path"
 import fs from "fs"
@@ -53,6 +54,7 @@ router.delete("/:id", authAdmin, async (req, res) => {
       }
     }
     await Articles.findByIdAndDelete(id)
+    await Comments.deleteMany({ article_id: id })
     res.status(200).send({ message: "Статья удалена" })
   } 
   catch (err) {

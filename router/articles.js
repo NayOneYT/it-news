@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Router } from "express";
 import { Articles } from "../models/articles.js";
+import { Comments } from "../models/comments.js";
 import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
@@ -57,6 +58,7 @@ router.delete("/:id", authAdmin, (req, res) => __awaiter(void 0, void 0, void 0,
             }
         }
         yield Articles.findByIdAndDelete(id);
+        yield Comments.deleteMany({ article_id: id });
         res.status(200).send({ message: "Статья удалена" });
     }
     catch (err) {
