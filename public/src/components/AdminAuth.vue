@@ -65,7 +65,7 @@ export default {
         localStorage.setItem("token", res.data.token)
         this.error = false
         this.$emit("close")
-        this.$router.push("/admin")
+        this.$router.push("/admin/moderation")
       } 
       catch (err) {
         this.error = err.response.data.error
