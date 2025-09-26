@@ -1,12 +1,19 @@
 <template>
   <section id="articleList">
     <div class="stickyContainer" :style="articles.length > 0 ? {} : { width: '90%', margin: '0 auto', flex: 'unset' }">
-      <button id="floatingBtn" @click="isModalOpen = true">Добавить статью</button>
+      <button class="floatingBtn" @click="isModalOpen = true">Добавить статью</button>
+      <button class="floatingBtn" @click="isAuthOpen = true">Авторизоваться</button>
     </div>
-    <transition name="modal-fade">
+    <transition name="fade">
       <CreateArticle
         v-if="isModalOpen"
         @close="isModalOpen = false"
+      />
+    </transition>
+    <transition name="fade">
+      <AdminAuth
+        v-if="isAuthOpen"
+        @close="isAuthOpen = false"
       />
     </transition>
     <div class="articleListContent" v-if="articles.length > 0">
@@ -22,17 +29,20 @@
 <script>
 import ArticleCard from './ArticleCard.vue'
 import CreateArticle from './CreateArticle.vue'
+import AdminAuth from './AdminAuth.vue'
 import axios from "axios"
 export default {
   name: "ArticleList",
   components: {
     ArticleCard,
-    CreateArticle
+    CreateArticle,
+    AdminAuth
   },
   data() {
     return {
       articles: [],
-      isModalOpen: false
+      isModalOpen: false,
+      isAuthOpen: false
     }
   },
   async mounted() {
@@ -54,16 +64,16 @@ export default {
   display: flex;
 }
 
-.modal-fade-leave-from {
+.fade-leave-from {
   opacity: 1;
   transform: translateY(0);
 }
 
-.modal-fade-leave-to {
+.fade-leave-to {
   opacity: 0;
 }
 
-.modal-fade-leave-active {
+.fade-leave-active {
   transition: all 0.3s ease;
 }
 
@@ -86,11 +96,12 @@ export default {
   justify-content: flex-start;
 }
 
-#floatingBtn {
+.floatingBtn {
   width: 100%;
   padding: 12px;
   font-size: 16px;
   color: white;
+  margin-bottom: 10px;
   font-weight: 500;
   background-color: #222222;
   border: none;
@@ -99,7 +110,7 @@ export default {
   transition: all 300ms ease;
 }
 
-#floatingBtn:hover {
+.floatingBtn:hover {
   transform: scale(1.1);
   background-color: #000000;
 }

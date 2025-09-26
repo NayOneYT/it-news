@@ -181,11 +181,6 @@ form textarea {
   max-height: 15vh;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-}
-
 button[type="submit"] {
   width: 90%;
   padding: 12px;

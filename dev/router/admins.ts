@@ -29,7 +29,7 @@ router.post("/login", async (req, res) => {
     catch (err) {
         res.status(500).json({ message: "Ошибка сервера" })
     }
-});
+})
 
 function authAdmin(req: Request, res: Response, next: NextFunction) {
     try {
