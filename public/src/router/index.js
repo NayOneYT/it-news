@@ -22,6 +22,18 @@ const router = new Router({
       path: '/admin/moderation',
       component: AdminModerationArticles,
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/admin',
+      redirect: '/admin/moderation'
+    },
+    {
+      path: '/admin/*',
+      redirect: '/admin/moderation'
+    },
+    {
+      path: '*',
+      redirect: '/'
     }
   ]
 })
