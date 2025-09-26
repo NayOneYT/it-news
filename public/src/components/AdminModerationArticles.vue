@@ -1,58 +1,73 @@
 <template>
-  <section id="adminPanel">
-    <h1>АДМИН</h1>
+  <section id="adminModerationArticles">
+    <div class="stickyContainer" :style="articles.length > 0 ? {} : { width: '90%', margin: '0 auto', flex: 'unset' }">
+      <button class="floatingBtn" @click="back">Назад</button>
+      <button class="floatingBtn" @click="upend">Сначала: {{ inverted? "старые" : "новые" }}</button>
+    </div>
+    <div class="content" v-if="articles.length > 0">
+      <ArticleCard  
+        v-for="el in articles" 
+        :key="el._id" 
+        :article="el"
+        :type="'moderation'"
+        @remove="removeArticle"
+      />
+    </div>
   </section>
 </template>
 
 <script>
-// import ArticleCard from './ArticleCard.vue'
-// import CreateArticle from './CreateArticle.vue'
-// import AdminAuth from './AdminAuth.vue'
-// import axios from "axios"
+import ArticleCard from './ArticleCard.vue'
+import axios from "axios"
 export default {
-  name: "AdminPanel",
-//   components: {
-//     ArticleCard,
-//     CreateArticle,
-//     AdminAuth
-//   },
-//   data() {
-//     return {
-//       articles: [],
-//       isModalOpen: false,
-//       isAuthOpen: false
-//     }
-//   },
-//   async mounted() {
-//     const result = await axios.get("/api/articles/approved")
-//     this.articles = result.data
-//     this.$nextTick(() => {
-//       const savedScroll = parseInt(sessionStorage.getItem('scrollPosition')) || 0;
-//       if (savedScroll) {
-//         window.scrollTo({ top: savedScroll });
-//         sessionStorage.removeItem('scrollPosition');
-//       }
-//     });
-//   }
+  name: "AdminModerationArticles",
+  components: {
+    ArticleCard
+  },
+  data() {
+    return {
+      articles: [],
+      inverted: false
+    }
+  },
+  async mounted() {
+    const token = localStorage.getItem("token")
+    const result = await axios.get("/api/articles/moderation", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    this.articles = result.data
+    this.$nextTick(() => {
+      const savedScroll = parseInt(sessionStorage.getItem('scrollPositionAdmin')) || 0
+      if (savedScroll) {
+        window.scrollTo({ top: savedScroll })
+        sessionStorage.removeItem('scrollPositionAdmin')
+      }
+    })
+    this.$nextTick(() => {
+    const el = this.$el
+    el.scrollIntoView()
+  })
+  },
+  methods: {
+    back() {
+      this.$router.push("/admin")
+    },
+    upend() {
+      this.inverted = !this.inverted
+      this.articles = this.articles.reverse()
+    },
+    removeArticle(id) {
+      this.articles = this.articles.filter(article => article._id !== id)
+    }
+  },
 }
 </script>
 
 <style scoped>
-#articleList {
+#adminModerationArticles {
   display: flex;
-}
-
-.fade-leave-from {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-leave-active {
-  transition: all 0.3s ease;
 }
 
 .stickyContainer {
@@ -64,7 +79,7 @@ export default {
   align-self: flex-start;
 }
 
-.articleListContent {
+.content {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
@@ -91,5 +106,18 @@ export default {
 .floatingBtn:hover {
   transform: scale(1.1);
   background-color: #000000;
+}
+
+.fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-leave-active {
+  transition: all 0.3s ease;
 }
 </style>

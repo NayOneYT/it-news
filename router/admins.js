@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Router } from "express";
-import { Articles } from "../models/articles.js";
 import { Admins } from "../models/admins.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -29,48 +28,6 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(200).send({ token });
     }
     catch (err) {
-        res.status(500);
-    }
-}));
-function authAdmin(req, res, next) {
-    try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader) {
-            return res.status(401).json({ message: "Нет токена, авторизуйтесь" });
-        }
-        const token = authHeader.split(" ")[1];
-        if (!token) {
-            return res.status(401).json({ message: "Неверный формат заголовка Authorization" });
-        }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.admin = decoded;
-        next();
-    }
-    catch (err) {
-        return res.status(401).json({ message: "Неверный или просроченный токен" });
-    }
-}
-router.get("/moderation", authAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const getArticles = yield Articles.find({ status: "moderation" }).sort({ published: -1 });
-        if (getArticles.length == 0)
-            throw new Error("No items");
-        res.status(200).send({ getArticles });
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-    }
-}));
-router.get("/approved", authAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const getArticles = yield Articles.find({ status: "approved" }).sort({ published: -1 });
-        if (getArticles.length == 0)
-            throw new Error("No items");
-        res.status(200).send({ getArticles });
-    }
-    catch (err) {
-        console.log(err);
         res.status(500);
     }
 }));

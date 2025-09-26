@@ -110,7 +110,7 @@ export default {
           if (this.img.data) {
             formData.append('img', this.img.data)
           }
-          await axios.post('/api/create-article', formData)
+          await axios.post('/api/articles/create-by-user', formData)
           this.submitted = true
         } 
         catch (err) {

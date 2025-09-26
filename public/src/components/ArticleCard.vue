@@ -1,28 +1,68 @@
 <template>
-    <div class="article">
-        <img :src="article.img" alt="Картинка" @error="onImageError">
-        <h2>{{ article.title }}</h2>
-        <p>{{ article.anons }}</p>
-        <button v-if="article.full_text != ''" @click="goToDetails">Читать детальнее</button>
+  <div class="article" v-if="type == 'moderation'">
+    <img :src="article.img" alt="Картинка" @error="onImageError">
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.anons }}</p>
+    <div class="buttons">
+      <button @click="goToDetailsAdmin">Детальнее</button>
+      <button class="red" @click="remove">Отклонить</button>
     </div>
+  </div>
+  <div class="article" v-else-if="type == 'approved'">
+    <img :src="article.img" alt="Картинка" @error="onImageError">
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.anons }}</p>
+    <div class="buttons">
+      <button @click="goToDetailsAdmin">Детальнее</button>
+      <button class="red" @click="remove">Удалить</button>
+    </div>
+  </div>
+  <div class="article" v-else>
+    <img :src="article.img" alt="Картинка" @error="onImageError">
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.anons }}</p>
+    <button v-if="article.full_text != ''" @click="goToDetailsUser">Читать детальнее</button>
+  </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: "ArticleCard",
   props: {
     article: {
       type: Object,
       required: true 
+    },
+    type: {
+      type: String,
+      required: false
     }
   },
   methods: {
     onImageError(event) {
       event.target.src = '/img/no-image.jpg';
     },
-    goToDetails() {
-      sessionStorage.setItem('scrollPosition', Math.round(window.scrollY.toString()));
+    goToDetailsUser() {
+      sessionStorage.setItem('scrollPositionUser', Math.round(window.scrollY));
       this.$router.push(`/articles/${this.article._id}`);
+    },
+    goToDetailsAdmin() {
+      sessionStorage.setItem('scrollPositionAdmin', Math.round(window.scrollY));
+      this.$router.push(`/articles/${this.article._id}`);
+    },
+    async remove() {
+      try {
+        const token = localStorage.getItem("token")
+        await axios.delete(`/api/articles/${this.article._id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        this.$emit("remove", this.article._id)
+      } catch (err) {
+        console.error("Ошибка при удалении:", err)
+      }
     }
   }
 }
@@ -71,5 +111,19 @@ export default {
 .article button:hover {
   transform: scale(1.1);
   background-color: #000000;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+button.red {
+  background-color: rgb(249, 20, 20);
+  transition: all 300ms ease;
+}
+
+button.red:hover {
+  background-color: rgb(190, 20, 20);
 }
 </style>

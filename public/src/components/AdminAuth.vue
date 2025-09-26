@@ -65,7 +65,7 @@ export default {
         localStorage.setItem("token", res.data.token)
         this.error = false
         this.$emit("close")
-        this.$router.push("/admin/moderation")
+        this.$router.push("/admin")
       } 
       catch (err) {
         this.error = err.response.data.error
@@ -99,7 +99,7 @@ export default {
 }
 
 h2 {
-    padding-bottom: 15px;
+  padding-bottom: 15px;
 }
 
 form input, form textarea {
