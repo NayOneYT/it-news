@@ -2,7 +2,7 @@
   <section id="articleList">
     <div class="stickyContainer" :style="articles.length > 0 ? {} : { width: '90%', margin: '0 auto', flex: 'unset' }">
       <button class="floatingBtn" @click="isModalOpen = true">Добавить статью</button>
-      <button class="floatingBtn" @click="isAuthOpen = true">Авторизоваться</button>
+      <button class="floatingBtn" @click="handleAuthClick">Авторизоваться</button>
     </div>
     <transition name="fade">
       <CreateArticle
@@ -31,6 +31,7 @@ import ArticleCard from './ArticleCard.vue'
 import CreateArticle from './CreateArticle.vue'
 import AdminAuth from './AdminAuth.vue'
 import axios from "axios"
+import { jwtDecode } from "jwt-decode";
 export default {
   name: "ArticleList",
   components: {
@@ -43,6 +44,24 @@ export default {
       articles: [],
       isModalOpen: false,
       isAuthOpen: false
+    }
+  },
+  methods: {
+    handleAuthClick() {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        this.isAuthOpen = true
+        return
+      }
+      const decoded = jwtDecode(token)
+      const now = Date.now() / 1000
+      if (decoded.exp && decoded.exp > now) {
+        this.$router.push("/admin/moderation")
+      } 
+      else {
+        localStorage.removeItem("token")
+        this.isAuthOpen = true
+      }
     }
   },
   async mounted() {
