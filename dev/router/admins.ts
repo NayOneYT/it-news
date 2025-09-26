@@ -25,7 +25,7 @@ router.post("/login", async (req, res) => {
         res.status(200).send({ token })
     } 
     catch (err) {
-        res.status(500)
+        res.status(500).send({ error: true, message: "Ошибка сервера" })
     }
 })
 

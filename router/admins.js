@@ -28,7 +28,7 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(200).send({ token });
     }
     catch (err) {
-        res.status(500);
+        res.status(500).send({ error: true, message: "Ошибка сервера" });
     }
 }));
 export const AdminsRouter = router;
