@@ -44,11 +44,11 @@ export default {
         window.scrollTo({ top: savedScroll })
         sessionStorage.removeItem('scrollPositionAdmin')
       }
+      else {
+        const el = this.$el
+      el.scrollIntoView()
+      }
     })
-    this.$nextTick(() => {
-    const el = this.$el
-    el.scrollIntoView()
-  })
   },
   methods: {
     back() {
