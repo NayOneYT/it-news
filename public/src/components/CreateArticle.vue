@@ -2,7 +2,7 @@
   <div id="createArticle" @click.self="$emit('close')">
     <div class="articleContent">
       <form @submit.prevent="submitArticle" v-if="!submitted">
-        <h2>Добавление статьи</h2>
+        <h2>{{ admin? "Создание" : "Добавление" }} статьи</h2>
         <input type="text" v-model="title.content" placeholder="Заголовок">
         <InputError :condition="title.error" :text="'Введите заголовок длиннее 10 символов'"/>
         <textarea v-model="anons.content" placeholder="Анонс"></textarea>
@@ -11,10 +11,10 @@
         <p>*Правила по написанию HTML кода можно изучить <span @click="readRules">здесь</span></p>
         <input type="file" @change="handleImg" accept="image/*">
         <InputError :condition="img.error" :text="'Можно выбрать только изображение'"/>
-        <button type="submit">Отправить</button>
+        <button type="submit">{{ admin? "Создать" : "Отправить" }}</button>
       </form>
       <div v-else>
-        <h3>Статья отправлена на модерацию!</h3>
+        <h3>Статья {{ admin? "успешно создана!" : "отправлена на модерацию!" }}</h3>
       </div>
     </div>
   </div>
@@ -25,6 +25,12 @@ import axios from 'axios'
 import InputError from './InputError.vue'
 export default {
   name: "CreateArticle",
+  props: {
+    admin: {
+      type: Boolean,
+      required: false
+    }
+  },
   components: {
     InputError
   },
@@ -123,7 +129,16 @@ export default {
           if (this.img.data) {
             formData.append('img', this.img.data)
           }
-          await axios.post('/api/articles/create-by-user', formData)
+          if (this.admin) {
+            const token = localStorage.getItem("token")
+            await axios.post('/api/articles/create-by-admin', formData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            })
+          }
+          else await axios.post('/api/articles/create-by-user', formData)
           this.submitted = true
           this.title.content = ""
           this.anons.content = ""

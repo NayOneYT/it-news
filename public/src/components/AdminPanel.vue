@@ -1,14 +1,31 @@
 <template>
   <div id="adminPanel">
+    <button @click="createArticle">Создать статью</button>
     <button @click="switchToModeration">Статьи на модерации</button>
     <button @click="switchToApproved">Подтвержденные статьи</button>
     <button @click="switchToMain">На главную</button>
+    <transition name="fade">
+      <CreateArticle
+        v-if="isModalOpen"
+        @close="isModalOpen = false"
+        :admin = true
+      />
+    </transition>
   </div>
 </template>
 
 <script>
+import CreateArticle from './CreateArticle.vue'
 export default {
   name: "AdminPanel",
+  components: {
+    CreateArticle
+  },
+  data() {
+    return {
+      isModalOpen: false
+    }
+  },
   mounted() {
     this.$nextTick(() => {
       const el = this.$el
@@ -16,6 +33,9 @@ export default {
     })
   },
   methods: {
+    createArticle() {
+      this.isModalOpen = true
+    },
     switchToModeration() {
       this.$router.push("/admin/moderation").catch(() => {})
     },
