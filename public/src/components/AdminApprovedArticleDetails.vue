@@ -1,25 +1,32 @@
 <template>
-  <section id="AdminModerationArticleDetails">
+  <section id="AdminApprovedArticleDetails">
     <div class="stickyContainer" :style="article ? {} : { width: '90%', margin: '0 auto', flex: 'unset' }">
-      <button @click="$router.push('/admin/moderation').catch(() => {})">Назад ко всем статьям</button>
+      <button @click="$router.push('/admin/approved').catch(() => {})">Назад ко всем статьям</button>
     </div>
     <div id="articleContent" v-if="article">
       <img :src="article.img" alt="Картинка" v-if="isOriginalImage">
       <h2>{{ article.title }}</h2>
       <p>{{ article.anons }}</p>
       <div id="fullText" v-html="article.full_text"></div>
-      <div class="buttons">
-        <button @click="approve">Одобрить</button>
-        <button class="red" @click="reject">Отклонить</button>
-      </div>
+      <CommentList 
+      v-if="comments.length > 0" 
+      :comments="comments" 
+      :admin="true"
+      @remove="deleteComment"
+      />
+      <button class="red" @click="remove">Удалить</button>
     </div>
   </section>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
+import CommentList from './CommentList.vue'
 export default {
-  name: "AdminModerationArticleDetails",
+  name: "AdminApprovedArticleDetails",
+  components: {
+    CommentList
+  },
   props: {
     id: {
       type: String,
@@ -29,6 +36,7 @@ export default {
   data() {
     return {
       article: null,
+      comments: [],
       isOriginalImage: false
     }
   },
@@ -37,6 +45,10 @@ export default {
       const articleRes = await axios.get(`/api/articles/${this.id}`);
       this.article = articleRes.data;
       if (this.article.img != "/img/no-image.jpg") this.isOriginalImage = true
+      const commentsRes = await axios.get('/api/comments', {
+        params: { article_id: this.article._id }
+      });
+      this.comments = commentsRes.data;
     } catch (err) {
       console.error("Ошибка при загрузке статьи или комментариев:", err);
     }
@@ -59,7 +71,7 @@ export default {
         console.error("Ошибка при одобрении:", err)
       }
     },
-    async reject() {
+    async remove() {
       try {
         const token = localStorage.getItem("token")
         await axios.delete(`/api/articles/${this.article._id}`, {
@@ -67,7 +79,20 @@ export default {
             Authorization: `Bearer ${token}`
           }
         })
-        this.$router.push("/admin/moderation").catch(() => {})
+        this.$router.push("/admin/approved").catch(() => {})
+      } catch (err) {
+        console.error("Ошибка при удалении:", err)
+      }
+    },
+    async deleteComment(id) {
+      try {
+        const token = localStorage.getItem("token")
+        await axios.delete(`/api/comments/${this.article._id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        this.comments = this.comments.filter(comment => comment._id != id)
       } catch (err) {
         console.error("Ошибка при удалении:", err)
       }
@@ -77,7 +102,7 @@ export default {
 </script>
 
 <style scoped>
-#AdminModerationArticleDetails {
+#AdminApprovedArticleDetails {
   display: flex;
   gap: 0;
   align-items: flex-start;
@@ -156,17 +181,14 @@ button:hover {
   border-radius: 10px;
 }
 
-.buttons {
-  display: flex;
-  justify-content: space-between;
-}
-
-button.red {
+#articleContent button.red {
+  width: 40%;
+  margin: 10px 30%;
   background-color: rgb(249, 20, 20);
   transition: all 300ms ease;
 }
 
-button.red:hover {
+#articleContent button.red:hover {
   background-color: rgb(190, 20, 20);
 }
 </style>

@@ -1,21 +1,28 @@
 <template>
-    <section class="comment">
-        <p><strong>{{ comment.name }}</strong></p>
-        <hr>
-        <p>{{ comment.text }}</p>
-        <span>{{ new Date(comment.published).toLocaleString() }}</span>
-    </section>
+  <section class="comment">
+    <div class="header">
+      <p><strong>{{ comment.name }}</strong></p>
+      <button v-if="admin" @click="$emit('remove', comment._id)">Удалить</button>
+    </div>
+    <hr>
+    <p>{{ comment.text }}</p>
+    <span>{{ new Date(comment.published).toLocaleString() }}</span>
+  </section>
 </template>
 
 <script>
 export default {
-    name: "CommentCard",
-    props: {
-        comment: {
-            type: Object,
-            required: true
-        }
+  name: "CommentCard",
+  props: {
+    comment: {
+      type: Object,
+      required: true
     },
+    admin: {
+      type: Boolean,
+      required: false
+    }
+  },
 }
 </script>
 
@@ -46,5 +53,33 @@ export default {
 
 .comment:last-child {
     margin-bottom: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header button {
+  width: 100px;
+  padding: 8px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: white;
+  font-weight: 500;
+  background-color: #222222;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 300ms ease;
+}
+
+.header button:hover {
+  transform: scale(1.1);
+  background-color: #000000;
+}
+
+.header p {
+  margin-top: 10px;
 }
 </style>

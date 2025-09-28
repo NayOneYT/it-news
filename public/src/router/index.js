@@ -6,6 +6,7 @@ import AdminPanel from '../components/AdminPanel.vue'
 import AdminModerationArticles from '../components/AdminModerationArticles.vue'
 import AdminApprovedArticles from '../components/AdminApprovedArticles.vue'
 import AdminModerationArticleDetails from '@/components/AdminModerationArticleDetails.vue'
+import AdminApprovedArticleDetails from '@/components/AdminApprovedArticleDetails.vue'
 import { jwtDecode } from "jwt-decode"
 
 Vue.use(Router)
@@ -40,6 +41,12 @@ const router = new Router({
     {
       path: '/admin/moderation/:id',
       component: AdminModerationArticleDetails,
+      props: true,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/admin/approved/:id',
+      component: AdminApprovedArticleDetails,
       props: true,
       meta: { requiresAuth: true }
     },
