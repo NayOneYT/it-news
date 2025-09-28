@@ -1,7 +1,12 @@
 <template>
     <section>
         <h2>Комментарии ({{ comments.length }})</h2>
-        <CommentCard v-for="comment in comments" :key="comment._id" :comment="comment"/>
+        <CommentCard 
+        v-for="comment in comments" 
+        :key="comment._id" 
+        :comment="comment" 
+        :admin="admin" 
+        @remove="$emit('remove', $event)"/>
     </section>
 </template>
 
@@ -13,6 +18,10 @@ export default {
         comments: {
             type: Array,
             required: true
+        },
+        admin: {
+            type: Boolean,
+            required: false
         }
     },
     components: {

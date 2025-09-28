@@ -2,18 +2,19 @@
   <div id="createArticle" @click.self="$emit('close')">
     <div class="articleContent">
       <form @submit.prevent="submitArticle" v-if="!submitted">
-        <h2>Добавление статьи</h2>
+        <h2>{{ admin? "Создание" : "Добавление" }} статьи</h2>
         <input type="text" v-model="title.content" placeholder="Заголовок">
-        <InputError :condition="title.error" :text="'Введите заголовок длиннее 10 символов'"/>
+        <InputError :condition="title.errorText != ''" :text="title.errorText"/>
         <textarea v-model="anons.content" placeholder="Анонс"></textarea>
-        <InputError :condition="anons.error" :text="'Введите анонс длиннее 10 символов'"/>
-        <textarea v-model="full_text" placeholder="Полный текст (HTML)"></textarea>
+        <InputError :condition="anons.errorText != ''" :text="anons.errorText"/>
+        <textarea class="html" v-model="full_text" placeholder="Полный текст (HTML)"></textarea>
+        <p>*Правила по написанию HTML кода можно изучить <span @click="readRules">здесь</span></p>
         <input type="file" @change="handleImg" accept="image/*">
-        <InputError :condition="img.error" :text="'Можно выбрать только изображение'"/>
-        <button type="submit">Отправить</button>
+        <InputError :condition="img.errorText != ''" :text="img.errorText"/>
+        <button type="submit">{{ admin? "Создать" : "Отправить" }}</button>
       </form>
       <div v-else>
-        <h3>Статья отправлена на модерацию!</h3>
+        <h3>Статья {{ admin? "успешно создана!" : "отправлена на модерацию!" }}</h3>
       </div>
     </div>
   </div>
@@ -24,6 +25,12 @@ import axios from 'axios'
 import InputError from './InputError.vue'
 export default {
   name: "CreateArticle",
+  props: {
+    admin: {
+      type: Boolean,
+      required: false
+    }
+  },
   components: {
     InputError
   },
@@ -31,26 +38,38 @@ export default {
     return {
       title: {
         content: "",
-        error: false
+        errorText: ""
       },
       anons: {
         content: "",
-        error: false
+        errorText: ""
       },
       full_text: '',
       img: 
       {
         data: null,
-        error: false
+        errorText: ""
       },
       submitted: false
     }
   },
   mounted() {
+    const savedTitle = sessionStorage.getItem("title")
+    if (savedTitle) this.title.content = savedTitle
+    const savedAnons = sessionStorage.getItem("anons")
+    if (savedAnons) this.anons.content = savedAnons
+    const savedFullText = sessionStorage.getItem("full_text")
+    if (savedFullText) this.full_text = savedFullText
     window.addEventListener('wheel', this.preventScroll, { passive: false })
     window.addEventListener('keydown', this.preventKeys)
   },
   beforeDestroy() {
+    if (this.title.content.trim() != "") sessionStorage.setItem("title", this.title.content) 
+    else sessionStorage.removeItem("title")
+    if (this.anons.content.trim() != "") sessionStorage.setItem("anons", this.anons.content)
+    else sessionStorage.removeItem("anons")
+    if (this.full_text.trim() != "") sessionStorage.setItem("full_text", this.full_text)
+    else sessionStorage.removeItem("full_text")
     window.removeEventListener('wheel', this.preventScroll)
     window.removeEventListener('keydown', this.preventKeys)
   },
@@ -82,26 +101,28 @@ export default {
     handleImg(event) {
       const file = event.target.files[0]
       if (!file.type.startsWith('image/')) {
-        this.img.error = true
+        this.img.errorText = "Можно выбрать только изображение"
         setTimeout(() => {
-          this.img.error = false
+          this.img.errorText = ""
         }, 5000)
         this.img.data = null
         event.target.value = ''
         return
       }
-      this.img.error = false
+      this.img.errorText = ""
       this.img.data = file
     },
     async submitArticle() {
       const formattedTitle = this.title.content.trim().replace(/\s+/g, ' ')
-      const isTitleValid = formattedTitle.length > 10
+      if (formattedTitle.length < 10) this.title.errorText = "Заголовок должен содержать не менее 10 символов"
+      else if (formattedTitle.length > 100) this.title.errorText = "Заголовок должен содержать не более 100 символов"
+      else this.title.errorText = ""
       const formattedAnons = this.anons.content.trim().replace(/\s+/g, ' ')
-      const isAnonsValid = formattedAnons.length > 10
+      if (formattedAnons.length < 10) this.anons.errorText = "Анонс должен содержать не менее 10 символов"
+      else if (formattedAnons.length > 200) this.anons.errorText = "Анонс должен содержать не более 200 символов"
+      else this.anons.errorText = ""
       const fullTextToSend = this.full_text.trim() == '' ? '' : this.full_text
-      if (isTitleValid && isAnonsValid) {
-        this.title.error = false
-        this.anons.error = false
+      if (this.title.errorText == "" && this.anons.errorText == "") {
         try {
           const formData = new FormData()
           formData.append('title', formattedTitle)
@@ -110,19 +131,28 @@ export default {
           if (this.img.data) {
             formData.append('img', this.img.data)
           }
-          await axios.post('/api/create-article', formData)
+          if (this.admin) {
+            const token = localStorage.getItem("token")
+            await axios.post('/api/articles/create-by-admin', formData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            })
+          }
+          else await axios.post('/api/articles/create-by-user', formData)
           this.submitted = true
+          this.title.content = ""
+          this.anons.content = ""
+          this.full_text = ""
         } 
         catch (err) {
           console.error('Ошибка при создании статьи:', err)
         }
-      } 
-      else {
-        if (!isTitleValid) this.title.error = true 
-        else this.title.error = false
-        if (!isAnonsValid) this.anons.error = true
-        else this.anons.error = false
       }
+    },
+    readRules() {
+      window.open('/rules', '_blank')
     }
   }
 }
@@ -181,9 +211,8 @@ form textarea {
   max-height: 15vh;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
+.html {
+  margin-bottom: 0;
 }
 
 button[type="submit"] {
@@ -203,5 +232,20 @@ button[type="submit"] {
 button[type="submit"]:hover {
   transform: scale(1.1);
   background-color: #000;
+}
+
+p {
+  color: #adadad;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+span {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+span:hover {
+  text-decoration: underline;
 }
 </style>

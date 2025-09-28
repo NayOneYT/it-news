@@ -3,9 +3,11 @@
     <h2>Оставьте комментарий</h2>
     <form @submit.prevent="handleSubmit">
       <input type="text" v-model="comment.name" placeholder="Введите имя">
-      <InputError :condition="nameError" :text="'Имя слишком короткое'"/>
+      <InputError :condition="shortNameErr" :text="'Имя должно содержать не менее 2-х символов'"/>
+      <InputError :condition="longNameErr" :text="'Имя должно содержать не более 30-и символов'"/>
       <textarea v-model="comment.text" placeholder="Введите комментарий"></textarea>
-      <InputError :condition="textError" :text="'Введите больше текста'"/>
+      <InputError :condition="shortTextErr" :text="'Текст должен содержать не менее 5-и символов'"/>
+      <InputError :condition="longTextErr" :text="'Текст должен содержать не более 1000-и символов'"/>
       <button type="submit">Отправить</button>
     </form>
   </section>
@@ -30,15 +32,19 @@ export default {
         name: "",
         text: ""
       },
-      nameError: false,
-      textError: false
+      shortNameErr: false,
+      shortTextErr: false,
+      longNameErr: false,
+      longTextErr: false
     }
   },
   methods: {
     handleSubmit() {
-      this.nameError = this.comment.name.trim().length < 2
-      this.textError = this.comment.text.trim().length < 5
-      if (this.nameError || this.textError) {
+      this.shortNameErr = this.comment.name.trim().length < 2
+      this.shortTextErr = this.comment.text.trim().length < 5
+      this.longNameErr = this.comment.name.trim().length > 30
+      this.longTextErr = this.comment.text.trim().length > 1000
+      if (this.shortNameErr || this.shortTextErr || this.longNameErr || this.longTextErr) {
         return
       }
       this.$emit('submitComment', {

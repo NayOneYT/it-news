@@ -1,28 +1,31 @@
 <template>
-  <section id="articleDetails">
+  <section id="AdminApprovedArticleDetails">
     <div class="stickyContainer" :style="article ? {} : { width: '90%', margin: '0 auto', flex: 'unset' }">
-      <button @click="$router.push('/')">Назад ко всем статьям</button>
+      <button @click="$router.push('/admin/approved').catch(() => {})">Назад ко всем статьям</button>
     </div>
     <div id="articleContent" v-if="article">
       <img :src="article.img" alt="Картинка" v-if="isOriginalImage">
       <h2>{{ article.title }}</h2>
       <p>{{ article.anons }}</p>
       <div id="fullText" v-html="article.full_text"></div>
-      <CommentList v-if="comments.length > 0" :comments="comments"/>
-      <LeaveCommentForm @submitComment="submitComment" :article_id="article._id"/>
+      <CommentList 
+      v-if="comments.length > 0" 
+      :comments="comments" 
+      :admin="true"
+      @remove="deleteComment"
+      />
+      <button class="red" @click="remove">Удалить</button>
     </div>
   </section>
 </template>
 
 <script>
-import axios from 'axios';
-import CommentList from './CommentList.vue';
-import LeaveCommentForm from './LeaveCommentForm.vue';
+import axios from 'axios'
+import CommentList from './CommentList.vue'
 export default {
-  name: "ArticleDetails",
+  name: "AdminApprovedArticleDetails",
   components: {
-    CommentList,
-    LeaveCommentForm
+    CommentList
   },
   props: {
     id: {
@@ -57,13 +60,43 @@ export default {
   });
   },
   methods: {
-    async submitComment(commentData) {
+    async approve() {
       try {
-        const result = await axios.post("/api/comments", commentData);
-        this.comments.unshift(result.data);
-      } 
-      catch (err) {
-        console.error("Ошибка при отправке комментария:", err)
+        const token = localStorage.getItem("token")
+        await axios.patch(`/api/articles/approve/${this.id}`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        this.$router.push("/admin/moderation").catch(() => {})
+      } catch (err) {
+        console.error("Ошибка при одобрении:", err)
+      }
+    },
+    async remove() {
+      try {
+        const token = localStorage.getItem("token")
+        await axios.delete(`/api/articles/${this.article._id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        this.$router.push("/admin/approved").catch(() => {})
+      } catch (err) {
+        console.error("Ошибка при удалении:", err)
+      }
+    },
+    async deleteComment(id) {
+      try {
+        const token = localStorage.getItem("token")
+        await axios.delete(`/api/comments/${this.article._id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        this.comments = this.comments.filter(comment => comment._id != id)
+      } catch (err) {
+        console.error("Ошибка при удалении:", err)
       }
     }
   }
@@ -71,7 +104,7 @@ export default {
 </script>
 
 <style scoped>
-#articleDetails {
+#AdminApprovedArticleDetails {
   display: flex;
   gap: 0;
   align-items: flex-start;
@@ -86,7 +119,7 @@ export default {
   align-self: flex-start;
 }
 
-#articleDetails button {
+button {
   width: 100%;
   padding: 12px;
   font-size: 16px;
@@ -99,7 +132,7 @@ export default {
   transition: all 300ms ease;
 }
 
-#articleDetails button:hover {
+button:hover {
   transform: scale(1.1);
   background-color: #000000;
 }
@@ -109,6 +142,11 @@ export default {
   background-color: rgba(230, 230, 230, 0.7);
   backdrop-filter: blur(6px);
   margin-right: 15%;
+}
+
+#articleContent button {
+  width: 90%;
+  margin: 10px 5%;
 }
 
 #articleContent img {
@@ -152,5 +190,16 @@ export default {
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-x: auto;
+}
+
+#articleContent button.red {
+  width: 40%;
+  margin: 10px 30%;
+  background-color: rgb(249, 20, 20);
+  transition: all 300ms ease;
+}
+
+#articleContent button.red:hover {
+  background-color: rgb(190, 20, 20);
 }
 </style>

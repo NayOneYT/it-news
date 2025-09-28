@@ -1,29 +1,25 @@
 <template>
-  <section id="articleDetails">
+  <section id="AdminModerationArticleDetails">
     <div class="stickyContainer" :style="article ? {} : { width: '90%', margin: '0 auto', flex: 'unset' }">
-      <button @click="$router.push('/')">Назад ко всем статьям</button>
+      <button @click="$router.push('/admin/moderation').catch(() => {})">Назад ко всем статьям</button>
     </div>
     <div id="articleContent" v-if="article">
       <img :src="article.img" alt="Картинка" v-if="isOriginalImage">
       <h2>{{ article.title }}</h2>
       <p>{{ article.anons }}</p>
       <div id="fullText" v-html="article.full_text"></div>
-      <CommentList v-if="comments.length > 0" :comments="comments"/>
-      <LeaveCommentForm @submitComment="submitComment" :article_id="article._id"/>
+      <div class="buttons">
+        <button @click="approve">Одобрить</button>
+        <button class="red" @click="reject">Отклонить</button>
+      </div>
     </div>
   </section>
 </template>
 
 <script>
 import axios from 'axios';
-import CommentList from './CommentList.vue';
-import LeaveCommentForm from './LeaveCommentForm.vue';
 export default {
-  name: "ArticleDetails",
-  components: {
-    CommentList,
-    LeaveCommentForm
-  },
+  name: "AdminModerationArticleDetails",
   props: {
     id: {
       type: String,
@@ -33,7 +29,6 @@ export default {
   data() {
     return {
       article: null,
-      comments: [],
       isOriginalImage: false
     }
   },
@@ -43,10 +38,6 @@ export default {
       this.article = articleRes.data;
       document.title = `${this.article.title} | IT News`
       if (this.article.img != "/img/no-image.jpg") this.isOriginalImage = true
-      const commentsRes = await axios.get('/api/comments', {
-        params: { article_id: this.article._id }
-      });
-      this.comments = commentsRes.data;
     } catch (err) {
       console.error("Ошибка при загрузке статьи или комментариев:", err);
       document.title = `Статья не найдена | IT News`
@@ -57,13 +48,30 @@ export default {
   });
   },
   methods: {
-    async submitComment(commentData) {
+    async approve() {
       try {
-        const result = await axios.post("/api/comments", commentData);
-        this.comments.unshift(result.data);
-      } 
-      catch (err) {
-        console.error("Ошибка при отправке комментария:", err)
+        const token = localStorage.getItem("token")
+        await axios.patch(`/api/articles/approve/${this.id}`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        this.$router.push("/admin/moderation").catch(() => {})
+      } catch (err) {
+        console.error("Ошибка при одобрении:", err)
+      }
+    },
+    async reject() {
+      try {
+        const token = localStorage.getItem("token")
+        await axios.delete(`/api/articles/${this.article._id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        this.$router.push("/admin/moderation").catch(() => {})
+      } catch (err) {
+        console.error("Ошибка при удалении:", err)
       }
     }
   }
@@ -71,7 +79,7 @@ export default {
 </script>
 
 <style scoped>
-#articleDetails {
+#AdminModerationArticleDetails {
   display: flex;
   gap: 0;
   align-items: flex-start;
@@ -86,7 +94,7 @@ export default {
   align-self: flex-start;
 }
 
-#articleDetails button {
+button {
   width: 100%;
   padding: 12px;
   font-size: 16px;
@@ -99,7 +107,7 @@ export default {
   transition: all 300ms ease;
 }
 
-#articleDetails button:hover {
+button:hover {
   transform: scale(1.1);
   background-color: #000000;
 }
@@ -109,6 +117,11 @@ export default {
   background-color: rgba(230, 230, 230, 0.7);
   backdrop-filter: blur(6px);
   margin-right: 15%;
+}
+
+#articleContent button {
+  width: 90%;
+  margin: 10px 5%;
 }
 
 #articleContent img {
@@ -152,5 +165,19 @@ export default {
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-x: auto;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+button.red {
+  background-color: rgb(249, 20, 20);
+  transition: all 300ms ease;
+}
+
+button.red:hover {
+  background-color: rgb(190, 20, 20);
 }
 </style>

@@ -1,26 +1,16 @@
 <template>
-  <section id="articleList">
+  <section id="adminModerationArticles">
     <div class="stickyContainer" :style="articles.length > 0 ? {} : { width: '90%', margin: '0 auto', flex: 'unset' }">
-      <button class="floatingBtn" @click="isModalOpen = true">Добавить статью</button>
-      <button class="floatingBtn" @click="handleAuthClick">Админская панель</button>
+      <button class="floatingBtn" @click="back">Назад</button>
+      <button class="floatingBtn" @click="upend">Сначала: {{ inverted? "старые" : "новые" }}</button>
     </div>
-    <transition name="fade">
-      <CreateArticle
-        v-if="isModalOpen"
-        @close="isModalOpen = false"
-      />
-    </transition>
-    <transition name="fade">
-      <AdminAuth
-        v-if="isAuthOpen"
-        @close="isAuthOpen = false"
-      />
-    </transition>
     <div class="content" v-if="articles.length > 0">
       <ArticleCard  
         v-for="el in articles" 
         :key="el._id" 
         :article="el"
+        :type="'moderation'"
+        @remove="removeArticle"
       />
     </div>
   </section>
@@ -28,59 +18,55 @@
 
 <script>
 import ArticleCard from './ArticleCard.vue'
-import CreateArticle from './CreateArticle.vue'
-import AdminAuth from './AdminAuth.vue'
 import axios from "axios"
-import { jwtDecode } from "jwt-decode";
 export default {
-  name: "ArticleList",
+  name: "AdminModerationArticles",
   components: {
-    ArticleCard,
-    CreateArticle,
-    AdminAuth
+    ArticleCard
   },
   data() {
     return {
       articles: [],
-      isModalOpen: false,
-      isAuthOpen: false
-    }
-  },
-  methods: {
-    handleAuthClick() {
-      const token = localStorage.getItem("token")
-      if (!token) {
-        this.isAuthOpen = true
-        return
-      }
-      const decoded = jwtDecode(token)
-      const now = Date.now() / 1000
-      if (decoded.exp && decoded.exp > now) {
-        sessionStorage.setItem('scrollPositionUser', Math.round(window.scrollY));
-        this.$router.push("/admin")
-      } 
-      else {
-        localStorage.removeItem("token")
-        this.isAuthOpen = true
-      }
+      inverted: false
     }
   },
   async mounted() {
-    const result = await axios.get("/api/articles/approved")
-    this.articles = result.data
-    this.$nextTick(() => {
-      const savedScroll = parseInt(sessionStorage.getItem('scrollPositionUser')) || 0
-      if (savedScroll) {
-        window.scrollTo({ top: savedScroll })
-        sessionStorage.removeItem('scrollPositionUser')
+    const token = localStorage.getItem("token")
+    const result = await axios.get("/api/articles/moderation", {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
     })
-  }
+    this.articles = result.data
+    this.$nextTick(() => {
+      const savedScroll = parseInt(sessionStorage.getItem('scrollPositionAdmin')) || 0
+      if (savedScroll) {
+        window.scrollTo({ top: savedScroll })
+        sessionStorage.removeItem('scrollPositionAdmin')
+      }
+      else {
+        const el = this.$el
+      el.scrollIntoView()
+      }
+    })
+  },
+  methods: {
+    back() {
+      this.$router.push("/admin").catch(() => {})
+    },
+    upend() {
+      this.inverted = !this.inverted
+      this.articles = this.articles.reverse()
+    },
+    removeArticle(id) {
+      this.articles = this.articles.filter(article => article._id !== id)
+    }
+  },
 }
 </script>
 
 <style scoped>
-#articleList {
+#adminModerationArticles {
   display: flex;
 }
 
