@@ -72,6 +72,8 @@ export default {
         })
         localStorage.setItem("token", res.data.token)
         this.error = false
+        this.login = ""
+        this.password = ""
         this.$emit("close")
         this.$router.push("/admin")
       } 

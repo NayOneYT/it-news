@@ -125,6 +125,9 @@ export default {
           }
           await axios.post('/api/articles/create-by-user', formData)
           this.submitted = true
+          this.title.content = ""
+          this.anons.content = ""
+          this.full_text = ""
         } 
         catch (err) {
           console.error('Ошибка при создании статьи:', err)
