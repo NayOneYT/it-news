@@ -4,13 +4,13 @@
       <form @submit.prevent="submitArticle" v-if="!submitted">
         <h2>{{ admin? "Создание" : "Добавление" }} статьи</h2>
         <input type="text" v-model="title.content" placeholder="Заголовок">
-        <InputError :condition="title.error" :text="'Введите заголовок длиннее 10 символов'"/>
+        <InputError :condition="title.errorText != ''" :text="title.errorText"/>
         <textarea v-model="anons.content" placeholder="Анонс"></textarea>
-        <InputError :condition="anons.error" :text="'Введите анонс длиннее 10 символов'"/>
+        <InputError :condition="anons.errorText != ''" :text="anons.errorText"/>
         <textarea class="html" v-model="full_text" placeholder="Полный текст (HTML)"></textarea>
         <p>*Правила по написанию HTML кода можно изучить <span @click="readRules">здесь</span></p>
         <input type="file" @change="handleImg" accept="image/*">
-        <InputError :condition="img.error" :text="'Можно выбрать только изображение'"/>
+        <InputError :condition="img.errorText != ''" :text="img.errorText"/>
         <button type="submit">{{ admin? "Создать" : "Отправить" }}</button>
       </form>
       <div v-else>
@@ -38,17 +38,17 @@ export default {
     return {
       title: {
         content: "",
-        error: false
+        errorText: ""
       },
       anons: {
         content: "",
-        error: false
+        errorText: ""
       },
       full_text: '',
       img: 
       {
         data: null,
-        error: false
+        errorText: ""
       },
       submitted: false
     }
@@ -101,26 +101,28 @@ export default {
     handleImg(event) {
       const file = event.target.files[0]
       if (!file.type.startsWith('image/')) {
-        this.img.error = true
+        this.img.errorText = "Можно выбрать только изображение"
         setTimeout(() => {
-          this.img.error = false
+          this.img.errorText = ""
         }, 5000)
         this.img.data = null
         event.target.value = ''
         return
       }
-      this.img.error = false
+      this.img.errorText = ""
       this.img.data = file
     },
     async submitArticle() {
       const formattedTitle = this.title.content.trim().replace(/\s+/g, ' ')
-      const isTitleValid = formattedTitle.length > 10
+      if (formattedTitle.length < 10) this.title.errorText = "Заголовок должен содержать не менее 10 символов"
+      else if (formattedTitle.length > 100) this.title.errorText = "Заголовок должен содержать не более 100 символов"
+      else this.title.errorText = ""
       const formattedAnons = this.anons.content.trim().replace(/\s+/g, ' ')
-      const isAnonsValid = formattedAnons.length > 10
+      if (formattedAnons.length < 10) this.anons.errorText = "Анонс должен содержать не менее 10 символов"
+      else if (formattedAnons.length > 200) this.anons.errorText = "Анонс должен содержать не более 200 символов"
+      else this.anons.errorText = ""
       const fullTextToSend = this.full_text.trim() == '' ? '' : this.full_text
-      if (isTitleValid && isAnonsValid) {
-        this.title.error = false
-        this.anons.error = false
+      if (this.title.errorText == "" && this.anons.errorText == "") {
         try {
           const formData = new FormData()
           formData.append('title', formattedTitle)
@@ -147,12 +149,6 @@ export default {
         catch (err) {
           console.error('Ошибка при создании статьи:', err)
         }
-      } 
-      else {
-        if (!isTitleValid) this.title.error = true 
-        else this.title.error = false
-        if (!isAnonsValid) this.anons.error = true
-        else this.anons.error = false
       }
     },
     readRules() {
