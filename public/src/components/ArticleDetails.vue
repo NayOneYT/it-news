@@ -141,5 +141,8 @@ export default {
   background-color: rgba(230, 230, 230, 0.7);
   border: 1px solid black;
   border-radius: 10px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto;
 }
 </style>

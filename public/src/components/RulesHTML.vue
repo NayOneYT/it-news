@@ -130,6 +130,10 @@ pre {
   box-sizing: border-box;
 }
 
+.show {
+  font-size: 16px;
+}
+
 .show h2 {
   padding: 15px;
   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
