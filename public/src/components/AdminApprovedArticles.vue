@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     back() {
-      this.$router.push("/admin")
+      this.$router.push("/admin").catch(() => {})
     },
     upend() {
       this.inverted = !this.inverted

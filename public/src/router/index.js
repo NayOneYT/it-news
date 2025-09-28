@@ -5,6 +5,7 @@ import ArticleDetails from '../components/ArticleDetails.vue'
 import AdminPanel from '../components/AdminPanel.vue'
 import AdminModerationArticles from '../components/AdminModerationArticles.vue'
 import AdminApprovedArticles from '../components/AdminApprovedArticles.vue'
+import { jwtDecode } from "jwt-decode"
 
 Vue.use(Router)
 
@@ -50,6 +51,11 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!token) {
+      return next('/')
+    }
+    const decoded = jwtDecode(token)
+    if (decoded.exp * 1000 < Date.now()) {
+      localStorage.removeItem("token")
       return next('/')
     }
   }

@@ -17,13 +17,13 @@ export default {
   },
   methods: {
     switchToModeration() {
-      this.$router.push("/admin/moderation")
+      this.$router.push("/admin/moderation").catch(() => {})
     },
     switchToApproved() {
-      this.$router.push("/admin/approved")
+      this.$router.push("/admin/approved").catch(() => {})
     },
     switchToMain() {
-      this.$router.push("/")
+      this.$router.push("/").catch(() => {})
     }
   }
 }
