@@ -28,10 +28,18 @@ export default {
     }
   },
   mounted() {
+    const savedLogin = sessionStorage.getItem("login")
+    if (savedLogin) this.login = savedLogin
+    const savedPassword = sessionStorage.getItem("password")
+    if (savedPassword) this.password = savedPassword
     window.addEventListener('wheel', this.preventScroll, { passive: false })
     window.addEventListener('keydown', this.preventKeys)
   },
   beforeDestroy() {
+    if (this.login.trim() != "") sessionStorage.setItem("login", this.login) 
+    else sessionStorage.removeItem("login")
+    if (this.password.trim() != "") sessionStorage.setItem("password", this.password)
+    else sessionStorage.removeItem("password")
     window.removeEventListener('wheel', this.preventScroll)
     window.removeEventListener('keydown', this.preventKeys)
   },

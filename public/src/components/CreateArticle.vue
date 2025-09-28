@@ -48,10 +48,22 @@ export default {
     }
   },
   mounted() {
+    const savedTitle = sessionStorage.getItem("title")
+    if (savedTitle) this.title.content = savedTitle
+    const savedAnons = sessionStorage.getItem("anons")
+    if (savedAnons) this.anons.content = savedAnons
+    const savedFullText = sessionStorage.getItem("full_text")
+    if (savedFullText) this.full_text = savedFullText
     window.addEventListener('wheel', this.preventScroll, { passive: false })
     window.addEventListener('keydown', this.preventKeys)
   },
   beforeDestroy() {
+    if (this.title.content.trim() != "") sessionStorage.setItem("title", this.title.content) 
+    else sessionStorage.removeItem("title")
+    if (this.anons.content.trim() != "") sessionStorage.setItem("anons", this.anons.content)
+    else sessionStorage.removeItem("anons")
+    if (this.full_text.trim() != "") sessionStorage.setItem("full_text", this.full_text)
+    else sessionStorage.removeItem("full_text")
     window.removeEventListener('wheel', this.preventScroll)
     window.removeEventListener('keydown', this.preventKeys)
   },
