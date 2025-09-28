@@ -7,7 +7,8 @@
         <InputError :condition="title.error" :text="'Введите заголовок длиннее 10 символов'"/>
         <textarea v-model="anons.content" placeholder="Анонс"></textarea>
         <InputError :condition="anons.error" :text="'Введите анонс длиннее 10 символов'"/>
-        <textarea v-model="full_text" placeholder="Полный текст (HTML)"></textarea>
+        <textarea class="html" v-model="full_text" placeholder="Полный текст (HTML)"></textarea>
+        <p>*Правила по написанию HTML кода можно изучить <span @click="readRules">здесь</span></p>
         <input type="file" @change="handleImg" accept="image/*">
         <InputError :condition="img.error" :text="'Можно выбрать только изображение'"/>
         <button type="submit">Отправить</button>
@@ -123,6 +124,9 @@ export default {
         if (!isAnonsValid) this.anons.error = true
         else this.anons.error = false
       }
+    },
+    readRules() {
+      window.open('/rules', '_blank')
     }
   }
 }
@@ -181,6 +185,10 @@ form textarea {
   max-height: 15vh;
 }
 
+.html {
+  margin-bottom: 0;
+}
+
 button[type="submit"] {
   width: 90%;
   padding: 12px;
@@ -198,5 +206,20 @@ button[type="submit"] {
 button[type="submit"]:hover {
   transform: scale(1.1);
   background-color: #000;
+}
+
+p {
+  color: #adadad;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+span {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+span:hover {
+  text-decoration: underline;
 }
 </style>

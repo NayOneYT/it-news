@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import RulesHTML from '../components/RulesHTML.vue'
 import ArticleList from '../components/ArticleList.vue'
 import ArticleDetails from '../components/ArticleDetails.vue'
 import AdminPanel from '../components/AdminPanel.vue'
 import AdminModerationArticles from '../components/AdminModerationArticles.vue'
 import AdminApprovedArticles from '../components/AdminApprovedArticles.vue'
-import AdminModerationArticleDetails from '@/components/AdminModerationArticleDetails.vue'
-import AdminApprovedArticleDetails from '@/components/AdminApprovedArticleDetails.vue'
+import AdminModerationArticleDetails from '../components/AdminModerationArticleDetails.vue'
+import AdminApprovedArticleDetails from '../components/AdminApprovedArticleDetails.vue'
 import { jwtDecode } from "jwt-decode"
 
 Vue.use(Router)
@@ -17,6 +18,10 @@ const router = new Router({
     {
       path: '/',
       component: ArticleList
+    },
+    {
+      path: '/rules',
+      component: RulesHTML
     },
     {
       path: '/articles/:id',
