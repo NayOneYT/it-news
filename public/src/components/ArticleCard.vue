@@ -91,11 +91,15 @@ export default {
 
 .article h2 {
   margin: 10px;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .article p {
   margin: 10px;
   font-size: 22px;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .article button {
