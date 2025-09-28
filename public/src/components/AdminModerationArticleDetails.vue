@@ -36,9 +36,11 @@ export default {
     try {
       const articleRes = await axios.get(`/api/articles/${this.id}`);
       this.article = articleRes.data;
+      document.title = `${this.article.title} | IT News`
       if (this.article.img != "/img/no-image.jpg") this.isOriginalImage = true
     } catch (err) {
       console.error("Ошибка при загрузке статьи или комментариев:", err);
+      document.title = `Статья не найдена | IT News`
     }
     this.$nextTick(() => {
     const el = this.$el;

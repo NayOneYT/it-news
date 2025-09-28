@@ -17,11 +17,13 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      component: ArticleList
+      component: ArticleList,
+      meta: { title: 'Главная | IT News' }
     },
     {
       path: '/rules',
-      component: RulesHTML
+      component: RulesHTML,
+      meta: { title: 'Правила написания HTML-кода при создании статьи | IT News' }
     },
     {
       path: '/articles/:id',
@@ -31,17 +33,17 @@ const router = new Router({
     {
       path: '/admin',
       component: AdminPanel,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true, title: 'Панель администратора | IT News' }
     },
     {
       path: '/admin/moderation',
       component: AdminModerationArticles,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true, title: 'Статьи на модерации | IT News' }
     },
     {
       path: '/admin/approved',
       component: AdminApprovedArticles,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true, title: 'Подтвержденные статьи | IT News' }
     },
     {
       path: '/admin/moderation/:id',
@@ -79,6 +81,14 @@ router.beforeEach((to, from, next) => {
     }
   }
   next()
+})
+
+router.afterEach((to) => {
+  if (to.meta?.title) {
+    document.title = to.meta.title
+  } else {
+    document.title = 'IT News'
+  }
 })
 
 export default router
