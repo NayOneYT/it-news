@@ -135,12 +135,16 @@ button:hover {
 #articleContent h2, :deep(#fullText) h2 {
   padding: 15px;
   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
+  word-break: break-word;
+  hyphens: auto;
 }
 
 #articleContent p, :deep(#fullText) p {
   font-size: 20px;
   padding: 0 30px 20px;
   text-align: justify;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 :deep(#fullText) ul, :deep(#fullText) ol {
