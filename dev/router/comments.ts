@@ -1,7 +1,39 @@
 import { Router } from "express";
+import type { Request, Response, NextFunction } from "express"
 import { Comments } from "../models/comments.js"
+import jwt from "jsonwebtoken"
 
 const router = Router()
+
+function authAdmin(req: Request, res: Response, next: NextFunction) {
+  try {
+    const authHeader = req.headers.authorization
+    if (!authHeader) {
+      return res.status(401).json({ message: "Нет токена, авторизуйтесь" })
+    }
+    const token = authHeader.split(" ")[1]
+    if (!token) {
+      return res.status(401).json({ message: "Неверный формат заголовка Authorization" })
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string)
+    ;(req as any).admin = decoded
+    next()
+  } 
+  catch (err) {
+    return res.status(401).json({ message: "Неверный или просроченный токен" })
+  }
+}
+
+router.delete("/:id", authAdmin, async (req, res) => {
+  try {
+    const id = req.params.id
+    await Comments.deleteOne({ article_id: id })
+    res.status(200).send({ message: "Комментарий удален" })
+  } catch (err) {
+    console.log(err)
+    res.status(500).send({ message: "Ошибка сервера" })
+  }
+})
 
 router.get("/", async (req, res) => {
     try {

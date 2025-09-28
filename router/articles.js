@@ -81,6 +81,35 @@ router.patch("/approve/:id", authAdmin, (req, res) => __awaiter(void 0, void 0, 
         res.status(500).send({ message: "Ошибка сервера" });
     }
 }));
+router.post("/create-by-admin", authAdmin, upload.single('img'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const title = req.body.title;
+        const anons = req.body.anons;
+        const full_text = req.body.full_text;
+        const article = new Articles({
+            title,
+            anons,
+            full_text,
+            status: "approved"
+        });
+        const savedArticle = yield article.save();
+        if (req.file) {
+            const ext = path.extname(req.file.originalname);
+            const imgPath = path.resolve('public/public/img');
+            const fileName = `${savedArticle._id}${ext}`;
+            const fullPath = path.join(imgPath, fileName);
+            fs.mkdirSync(imgPath, { recursive: true });
+            fs.writeFileSync(fullPath, req.file.buffer);
+            savedArticle.img = `/img/${fileName}`;
+            yield savedArticle.save();
+        }
+        res.status(201).send({ message: "Статья успешно создана" });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send({ message: "Ошибка сервера" });
+    }
+}));
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const getArticles = yield Articles.find().sort({ published: -1 });

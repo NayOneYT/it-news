@@ -9,7 +9,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Router } from "express";
 import { Comments } from "../models/comments.js";
+import jwt from "jsonwebtoken";
 const router = Router();
+function authAdmin(req, res, next) {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ message: "Нет токена, авторизуйтесь" });
+        }
+        const token = authHeader.split(" ")[1];
+        if (!token) {
+            return res.status(401).json({ message: "Неверный формат заголовка Authorization" });
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.admin = decoded;
+        next();
+    }
+    catch (err) {
+        return res.status(401).json({ message: "Неверный или просроченный токен" });
+    }
+}
+router.delete("/:id", authAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        yield Comments.deleteOne({ article_id: id });
+        res.status(200).send({ message: "Комментарий удален" });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Ошибка сервера" });
+    }
+}));
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const article_id = req.query.article_id;

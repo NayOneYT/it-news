@@ -78,6 +78,36 @@ router.patch("/approve/:id", authAdmin, async (req, res) => {
   }
 })
 
+router.post("/create-by-admin", authAdmin, upload.single('img'), async (req, res) => {
+  try {
+    const title = req.body.title
+    const anons = req.body.anons
+    const full_text = req.body.full_text
+    const article = new Articles({
+      title,
+      anons,
+      full_text,
+      status: "approved"
+    })
+    const savedArticle = await article.save()
+    if (req.file) {
+      const ext = path.extname(req.file.originalname)
+      const imgPath = path.resolve('public/public/img')
+      const fileName = `${savedArticle._id}${ext}`
+      const fullPath = path.join(imgPath, fileName)
+      fs.mkdirSync(imgPath, { recursive: true })
+      fs.writeFileSync(fullPath, req.file.buffer)
+      savedArticle.img = `/img/${fileName}`
+      await savedArticle.save()
+    }
+    res.status(201).send({ message: "Статья успешно создана" })
+  } 
+  catch (err) {
+    console.error(err)
+    res.status(500).send({ message: "Ошибка сервера" })
+  }
+})
+
 router.get("/", async (req, res) => {
   try {
     const getArticles = await Articles.find().sort({published: -1})
