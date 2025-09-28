@@ -113,6 +113,8 @@ export default {
 
 #articleContent img {
   width: 100%;
+  max-height: 800px;
+  object-fit: cover;
   border-radius: 10px;
   border: 1px solid black;
   margin-top: 15px;
