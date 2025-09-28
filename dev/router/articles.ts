@@ -63,6 +63,21 @@ router.delete("/:id", authAdmin, async (req, res) => {
   }
 })
 
+router.patch("/approve/:id", authAdmin, async (req, res) => {
+  try {
+    const id = req.params.id
+    const article = await Articles.findById(id)
+    if (!article) {
+      return res.status(404).send({ message: "Статья не найдена" })
+    }
+    await Articles.updateOne({_id: id}, {$set: {status: "approved"}})
+    res.status(200).send({ message: "Статья одобрена" })
+  } catch (err) {
+    console.error(err)
+    res.status(500).send({ message: "Ошибка сервера" })
+  }
+})
+
 router.get("/", async (req, res) => {
   try {
     const getArticles = await Articles.find().sort({published: -1})

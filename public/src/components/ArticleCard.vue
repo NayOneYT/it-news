@@ -4,7 +4,7 @@
     <h2>{{ article.title }}</h2>
     <p>{{ article.anons }}</p>
     <div class="buttons">
-      <button @click="goToDetailsAdmin">Детальнее</button>
+      <button @click="goToDetailsModeration">Детальнее</button>
       <button class="red" @click="remove">Отклонить</button>
     </div>
   </div>
@@ -13,7 +13,7 @@
     <h2>{{ article.title }}</h2>
     <p>{{ article.anons }}</p>
     <div class="buttons">
-      <button @click="goToDetailsAdmin">Детальнее</button>
+      <button @click="goToDetailsApproved">Детальнее</button>
       <button class="red" @click="remove">Удалить</button>
     </div>
   </div>
@@ -21,7 +21,7 @@
     <img :src="article.img" alt="Картинка" @error="onImageError">
     <h2>{{ article.title }}</h2>
     <p>{{ article.anons }}</p>
-    <button v-if="article.full_text != ''" @click="goToDetailsUser">Читать детальнее</button>
+    <button v-if="article.full_text != ''" @click="goToDetails">Читать детальнее</button>
   </div>
 </template>
 
@@ -43,13 +43,17 @@ export default {
     onImageError(event) {
       event.target.src = '/img/no-image.jpg';
     },
-    goToDetailsUser() {
+    goToDetails() {
       sessionStorage.setItem('scrollPositionUser', Math.round(window.scrollY));
       this.$router.push(`/articles/${this.article._id}`);
     },
-    goToDetailsAdmin() {
+    goToDetailsModeration() {
       sessionStorage.setItem('scrollPositionAdmin', Math.round(window.scrollY));
-      this.$router.push(`/articles/${this.article._id}`);
+      this.$router.push(`/admin/moderation/${this.article._id}`).catch(() => {});
+    },
+    goToDetailsApproved() {
+      sessionStorage.setItem('scrollPositionAdmin', Math.round(window.scrollY));
+      this.$router.push(`/admin/approved/${this.article._id}`).catch(() => {});
     },
     async remove() {
       try {

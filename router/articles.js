@@ -66,6 +66,21 @@ router.delete("/:id", authAdmin, (req, res) => __awaiter(void 0, void 0, void 0,
         res.status(500).send({ message: "Ошибка сервера" });
     }
 }));
+router.patch("/approve/:id", authAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const article = yield Articles.findById(id);
+        if (!article) {
+            return res.status(404).send({ message: "Статья не найдена" });
+        }
+        yield Articles.updateOne({ _id: id }, { $set: { status: "approved" } });
+        res.status(200).send({ message: "Статья одобрена" });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send({ message: "Ошибка сервера" });
+    }
+}));
 router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const getArticles = yield Articles.find().sort({ published: -1 });
