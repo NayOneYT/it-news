@@ -1,5 +1,9 @@
 # Сайт с IT-новостями (SPA) на стеке MEVN (MongoDB + Express.js + Vue.js + Node.js)
 
+## Деплой:
+
+https://it-news-wrlq.onrender.com/
+
 ## Технологии
 
 **Backend:** MongoDB, Express.js, Node.js, TypeScript  
