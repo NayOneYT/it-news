@@ -2,6 +2,7 @@
   <section id="articleList">
     <div class="stickyContainer" :style="articles.length > 0 ? {} : { width: '90%', margin: '0 auto', flex: 'unset' }">
       <button class="floatingBtn" @click="isModalOpen = true">Добавить статью</button>
+      <button class="floatingBtn" @click="upend">Сначала: {{ inverted? "старые" : "новые" }}</button>
       <button class="floatingBtn" @click="handleAuthClick">Админская панель</button>
     </div>
     <transition name="fade">
@@ -43,7 +44,8 @@ export default {
     return {
       articles: [],
       isModalOpen: false,
-      isAuthOpen: false
+      isAuthOpen: false,
+      inverted: false
     }
   },
   methods: {
@@ -63,7 +65,11 @@ export default {
         localStorage.removeItem("token")
         this.isAuthOpen = true
       }
-    }
+    },
+    upend() {
+      this.inverted = !this.inverted
+      this.articles = this.articles.reverse()
+    },
   },
   async mounted() {
     const result = await axios.get("/api/articles/approved")
