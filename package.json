@@ -8,7 +8,9 @@
     "server": "nodemon app.js",
     "ts": "npx tsc -w",
     "client": "cd public && npm run serve",
-    "dev": "concurrently \"nodemon app.js\" \"npx tsc -w\" \"cd public && npm run serve\""
+    "dev": "concurrently \"nodemon app.js\" \"npx tsc -w\" \"cd public && npm run serve\"",
+    "build": "cd public && npm run build",
+    "start": "node app.js"
   },
   "type": "module",
   "keywords": [],

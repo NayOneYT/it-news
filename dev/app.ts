@@ -15,6 +15,13 @@ app.use("/api/comments", CommentsRouter)
 app.use("/api/admin", AdminsRouter)
 app.use("/img", express.static(path.resolve("public/public/img")))
 
+const __dirname = path.resolve()
+app.use(express.static(path.join(__dirname, "public", "dist")))
+
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.resolve(__dirname, "public/dist/index.html"))
+})
+
 connect(MONGODB_URL)
   .then(() => {
     app.listen(PORT, () => {
