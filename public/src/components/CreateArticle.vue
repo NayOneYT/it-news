@@ -60,8 +60,9 @@ export default {
     if (savedAnons) this.anons.content = savedAnons
     const savedFullText = sessionStorage.getItem("full_text")
     if (savedFullText) this.full_text = savedFullText
-    window.addEventListener('wheel', this.preventScroll, { passive: false })
-    window.addEventListener('keydown', this.preventKeys)
+    document.addEventListener('wheel', this.preventScroll, { passive: false })
+    document.addEventListener('keydown', this.preventKeys, { passive: false })
+    document.addEventListener('touchmove', this.preventTouch, { passive: false })
   },
   beforeDestroy() {
     if (this.title.content.trim() != "") sessionStorage.setItem("title", this.title.content) 
@@ -70,8 +71,9 @@ export default {
     else sessionStorage.removeItem("anons")
     if (this.full_text.trim() != "") sessionStorage.setItem("full_text", this.full_text)
     else sessionStorage.removeItem("full_text")
-    window.removeEventListener('wheel', this.preventScroll)
-    window.removeEventListener('keydown', this.preventKeys)
+    document.removeEventListener('wheel', this.preventScroll)
+    document.removeEventListener('keydown', this.preventKeys)
+    document.removeEventListener('touchmove', this.preventTouch)
   },
   methods: {
     preventScroll(e) {
@@ -97,6 +99,13 @@ export default {
       if (keys.includes(e.keyCode)) {
           e.preventDefault()
       }
+    },
+    preventTouch(e) {
+      const target = e.target
+      if (target.tagName === 'TEXTAREA') {
+        if (target.scrollHeight > target.clientHeight) return
+      }
+      e.preventDefault()
     },
     handleImg(event) {
       const file = event.target.files[0]
