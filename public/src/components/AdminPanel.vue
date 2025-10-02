@@ -1,8 +1,8 @@
 <template>
   <div id="adminPanel">
     <button @click="createArticle">Создать статью</button>
-    <button @click="switchToModeration">Статьи на модерации</button>
-    <button @click="switchToApproved">Подтвержденные статьи</button>
+    <button @click="switchToModeration">Статьи на модерации ( {{moderationArticles.length}} )</button>
+    <button @click="switchToApproved">Подтвержденные статьи ( {{approvedArticles.length}} )</button>
     <button @click="switchToMain">На главную</button>
     <transition name="fade">
       <CreateArticle
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import CreateArticle from './CreateArticle.vue'
 export default {
   name: "AdminPanel",
@@ -23,10 +24,21 @@ export default {
   },
   data() {
     return {
-      isModalOpen: false
+      isModalOpen: false,
+      moderationArticles: [],
+      approvedArticles: []
     }
   },
-  mounted() {
+  async mounted() {
+    const token = localStorage.getItem("token")
+    const moderationResult = await axios.get("/api/articles/moderation", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    this.moderationArticles = moderationResult.data
+    const approvedResult = await axios.get("/api/articles/approved")
+    this.approvedArticles = approvedResult.data
     this.$nextTick(() => {
       const el = this.$el
       el.scrollIntoView()
