@@ -1,7 +1,7 @@
 <template>
   <div id="createArticle" @click.self="$emit('close')">
     <div class="articleContent">
-      <form @submit.prevent="submitArticle" v-if="!submitted">
+      <form @submit.prevent="submitArticle" v-if="!submitted && !blocked">
         <h2>{{ admin? "Создание" : "Добавление" }} статьи</h2>
         <input type="text" v-model="title.content" placeholder="Заголовок">
         <InputError :condition="title.errorText != ''" :text="title.errorText"/>
@@ -13,7 +13,11 @@
         <InputError :condition="img.errorText != ''" :text="img.errorText"/>
         <button type="submit">{{ admin? "Создать" : "Отправить" }}</button>
       </form>
-      <div v-else>
+      <div v-else-if="blocked">
+        <h1>Вы недавно отправили статью.<br>
+        Попробуйте снова через {{ remainingTime }} сек</h1>
+      </div>
+      <div v-else-if="submitted">
         <h1>Статья {{ admin? "успешно создана!" : "отправлена на модерацию!" }}</h1>
       </div>
     </div>
@@ -50,10 +54,24 @@ export default {
         data: null,
         errorText: ""
       },
-      submitted: false
+      submitted: false,
+      blocked: false,
+      cooldown: 60000,
+      remainingTime: 0
     }
   },
   mounted() {
+    if (!this.admin) {
+      const lastSuccess = localStorage.getItem("lastSuccess")
+      if (lastSuccess) {
+        const diff = Date.now() - parseInt(lastSuccess)
+        if (diff < this.cooldown) {
+          this.blocked = true
+          this.remainingTime = Math.ceil((this.cooldown - diff) / 1000)
+          this.startCooldownTimer()
+        }
+      }
+    }
     const savedTitle = sessionStorage.getItem("title")
     if (savedTitle) this.title.content = savedTitle
     const savedAnons = sessionStorage.getItem("anons")
@@ -154,6 +172,11 @@ export default {
           this.title.content = ""
           this.anons.content = ""
           this.full_text = ""
+          if (!this.admin) {
+            localStorage.setItem("lastSuccess", Date.now().toString())
+            this.remainingTime = this.cooldown / 1000
+            this.startCooldownTimer()
+          }
         } 
         catch (err) {
           console.error('Ошибка при создании статьи:', err)
@@ -162,6 +185,15 @@ export default {
     },
     readRules() {
       window.open('/rules', '_blank')
+    },
+    startCooldownTimer() {
+      const interval = setInterval(() => {
+        this.remainingTime--
+        if (this.remainingTime <= 0) {
+          this.blocked = false
+          clearInterval(interval)
+        }
+      }, 1000)
     }
   }
 }
