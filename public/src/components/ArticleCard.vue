@@ -57,13 +57,13 @@ export default {
     },
     async remove() {
       try {
+        this.$emit("remove", this.article._id)
         const token = localStorage.getItem("token")
         await axios.delete(`/api/articles/${this.article._id}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
-        this.$emit("remove", this.article._id)
       } catch (err) {
         console.error("Ошибка при удалении:", err)
       }

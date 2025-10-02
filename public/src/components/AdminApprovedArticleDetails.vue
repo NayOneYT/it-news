@@ -93,13 +93,13 @@ export default {
     },
     async deleteComment(id) {
       try {
+        this.comments = this.comments.filter(comment => comment._id != id)
         const token = localStorage.getItem("token")
         await axios.delete(`/api/comments/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
-        this.comments = this.comments.filter(comment => comment._id != id)
       } catch (err) {
         console.error("Ошибка при удалении:", err)
       }
