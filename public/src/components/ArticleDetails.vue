@@ -102,7 +102,7 @@ button {
   transition: all 300ms ease;
 }
 
-#articleContent button:hover {
+.stickyContainer button:hover {
   transform: scale(1.1);
   background-color: #000000;
 }
