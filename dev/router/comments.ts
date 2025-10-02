@@ -27,7 +27,7 @@ function authAdmin(req: Request, res: Response, next: NextFunction) {
 router.delete("/:id", authAdmin, async (req, res) => {
   try {
     const id = req.params.id
-    await Comments.deleteOne({ article_id: id })
+    await Comments.deleteOne({ _id: id })
     res.status(200).send({ message: "Комментарий удален" })
   } catch (err) {
     console.log(err)

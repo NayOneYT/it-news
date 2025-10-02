@@ -63,15 +63,19 @@ export default {
 h2 {
   padding: 15px;
   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
+  word-break: break-word;
+  hyphens: auto;
 }
+
 form {
-  width: calc(100%-60px);
-  margin: 0 30px;
+  width: 96%;
+  margin: auto;
 }
+
 form input, form textarea {
   display: block;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   padding: 15px 20px;
   border-radius: 10px;
   border: 1px solid black;
@@ -87,7 +91,7 @@ form textarea {
 
 form button {
   width: 40%;
-  margin: 10px 30%;
+  margin: 0px 30% 12px;
   padding: 12px;
   font-size: 20px;
   color: white;
@@ -102,5 +106,53 @@ form button {
 form button:hover {
   transform: scale(1.1);
   background-color: #000000;
+}
+
+@media (max-width: 768px) {
+  h2 {
+    padding: 12px;
+    font-size: 20px;
+  }
+
+  form input, form textarea {
+    margin-bottom: 10px;
+    padding: 12px 16px;
+    font-size: 18px;
+  }
+
+  form textarea {
+    height: 48px;
+    min-height: 48px;
+  }
+
+  form button {
+    margin: 0px 30% 10px;
+    padding: 10px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 425px) {
+  h2 {
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  form input, form textarea {
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  form textarea {
+    height: 38px;
+    min-height: 38px;
+  }
+
+  form button {
+    margin: 0px 30% 8px;
+    padding: 8px;
+    font-size: 14px;
+  }
 }
 </style>

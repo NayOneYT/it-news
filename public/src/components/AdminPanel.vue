@@ -50,18 +50,23 @@ export default {
 </script>
 
 <style scoped>
+#adminPanel {
+  display: flex;
+  flex-direction: column;
+}
+
 button:first-child {
   margin-top: 15px;
 }
 
 button {
-  width: 90%;
-  padding: 12px;
+  flex: 1;
+  width: 86%;
+  margin: 0 7% 15px;
   font-size: 16px;
-  color: white;
-  margin-bottom: 15px;
+  padding: 12px;
   font-weight: 500;
-  margin-left: 5%;
+  color: white;
   background-color: #222222;
   border: none;
   border-radius: 10px;

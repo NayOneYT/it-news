@@ -32,7 +32,7 @@ function authAdmin(req, res, next) {
 router.delete("/:id", authAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
-        yield Comments.deleteOne({ article_id: id });
+        yield Comments.deleteOne({ _id: id });
         res.status(200).send({ message: "Комментарий удален" });
     }
     catch (err) {

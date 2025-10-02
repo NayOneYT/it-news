@@ -1,6 +1,7 @@
 <template>
     <footer>
-      <span>Веб-блог с новостями</span>
+      <p>© 2025 IT News. Все права защищены</p>
+      <p>Некоммерческий учебный проект</p>
     </footer>
 </template>
 
@@ -16,7 +17,19 @@ footer {
     background-color: #222222;
     padding: 30px;
     color: white;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  footer {font-size: 21px;}
+}
+
+@media (max-width: 768px) {
+  footer {font-size: 16px;}
+}
+
+@media (max-width: 425px) {
+  footer {font-size: 11px;}
 }
 </style>

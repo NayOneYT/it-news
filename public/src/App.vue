@@ -1,7 +1,7 @@
 <template>
   <main>
     <AppHeader />
-    <router-view />
+    <router-view class="page-content"/>
     <AppFooter />
   </main>
 </template>
@@ -26,8 +26,16 @@ export default {
     outline: none;
     font-family: "Montserrat", sans-serif;
 }
+
 main {
+  display: flex;
+  flex-direction: column;
   background: url("../public/img/main-background.jpg");
   background-size: 100% auto;
+  min-height: 100vh;
+}
+
+.page-content {
+  flex: 1;
 }
 </style>

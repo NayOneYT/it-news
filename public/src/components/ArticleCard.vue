@@ -74,7 +74,7 @@ export default {
 
 <style scoped>
 .article {
-  width: 450px;
+  width: 420px;
   background-color: rgba(230, 230, 230, 0.7);
   border-radius: 10px;
   border: 1px solid black;
@@ -83,7 +83,7 @@ export default {
 
 .article img {
   width: 100%;
-  height: 200px;
+  height: 180px;
   object-fit: cover;
   border-top-left-radius: 9px;
   border-top-right-radius: 9px;
@@ -133,5 +133,54 @@ button.red {
 
 button.red:hover {
   background-color: rgb(190, 20, 20);
+}
+
+@media (max-width: 768px) {
+  .article {
+    width: 380px;
+  }
+  
+  .article img {
+    height: 160px;
+  }
+
+  .article h2 {
+    font-size: 22px;
+    margin: 8px;
+  }
+
+  .article p {
+    font-size: 20px;
+    margin: 8px;
+  }
+
+  .article button {
+    margin: 0 7% 10px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 425px) {
+  .article {
+    width: 300px;
+  }
+
+  .article img {
+    height: 120px;
+  }
+
+  .article h2 {
+    font-size: 20px;
+    margin: 6px;
+  }
+
+  .article p {
+    font-size: 17px;
+    margin: 6px;
+  }
+
+  .article button {
+    font-size: 14px;
+  }
 }
 </style>

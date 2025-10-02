@@ -14,7 +14,7 @@
         <button type="submit">{{ admin? "Создать" : "Отправить" }}</button>
       </form>
       <div v-else>
-        <h3>Статья {{ admin? "успешно создана!" : "отправлена на модерацию!" }}</h3>
+        <h1>Статья {{ admin? "успешно создана!" : "отправлена на модерацию!" }}</h1>
       </div>
     </div>
   </div>
@@ -169,34 +169,34 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1;
 }
 
 .articleContent {
   background-color: #fff;
-  padding: 30px;
   border-radius: 10px;
-  width: 30%;
-  max-width: 90%;
+  width: 600px;
   box-shadow: 0 0 50px black;
+  padding: 20px;
 }
 
-h3 {
-  width: 100%;
-  font-size: 30px;
+h1 {
   text-align: center;
-  margin: 0;
-  box-sizing: border-box;
+  padding: 30px;
+  font-size: 30px;
 }
 
 h2 {
-    padding-bottom: 15px;
+  padding-bottom: 15px;
+  text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
+  word-break: break-word;
+  hyphens: auto;
 }
 
 form input, form textarea {
   display: block;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   padding: 15px 20px;
   border-radius: 10px;
   border: 1px solid black;
@@ -208,7 +208,7 @@ form textarea {
   resize: vertical;
   height: 56px;
   min-height: 56px;
-  max-height: 15vh;
+  max-height: 100px;
 }
 
 .html {
@@ -216,9 +216,9 @@ form textarea {
 }
 
 button[type="submit"] {
-  width: 90%;
+  width: 60%;
+  margin: 0px 20%;
   padding: 12px;
-  margin-left: 5%;
   font-size: 20px;
   color: white;
   font-weight: 500;
@@ -238,6 +238,7 @@ p {
   color: #adadad;
   margin-bottom: 10px;
   margin-top: 5px;
+  font-size: 16px;
 }
 
 span {
@@ -247,5 +248,83 @@ span {
 
 span:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .articleContent {
+    width: 90%;
+    padding: 14px;
+  }
+
+  h1 {
+    padding: 22px;
+    font-size: 24px;
+  }
+
+  h2 {
+    padding-bottom: 12px;
+    font-size: 20px;
+  }
+
+  form input, form textarea {
+    margin-bottom: 10px;
+    padding: 12px 16px;
+    font-size: 18px;
+  }
+
+  form textarea {
+    height: 48px;
+    min-height: 48px;
+  }
+
+  button[type="submit"] {
+    padding: 10px;
+    font-size: 18px;
+  }
+  
+  p {
+    margin-bottom: 8px;
+    margin-top: 4px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 425px) {
+  .articleContent {
+    width: 90%;
+    padding: 10px;
+  }
+
+  h1 {
+    padding: 16px;
+    font-size: 20px;
+  }
+
+  h2 {
+    padding-bottom: 8px;
+    font-size: 16px;
+  }
+
+  form input, form textarea {
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  form textarea {
+    height: 38px;
+    min-height: 38px;
+  }
+
+  button[type="submit"] {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  p {
+    margin-bottom: 6px;
+    margin-top: 3px;
+    font-size: 11px;
+  }
 }
 </style>

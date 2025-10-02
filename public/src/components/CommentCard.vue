@@ -34,25 +34,28 @@ export default {
   border: 1px solid black;
   padding: 10px;
   border-radius: 10px;
-  margin: 0 30px 20px;
+  margin: 0 2% 12px;
 }
-.comment p {
+
+.comment:last-child {
+  margin-bottom: 0;
+}
+
+p {
   font-size: 20px;
   padding: 0;
   margin-bottom: 10px;
+  word-break: break-word;
+  hyphens: auto;
 }
 
-.comment span {
+span {
   align-self: flex-end;
   font-size: 16px;
 }
 
-.comment hr {
+hr {
   margin-bottom: 5px;
-}
-
-.comment:last-child {
-    margin-bottom: 0;
 }
 
 .header {
@@ -60,7 +63,7 @@ export default {
   justify-content: space-between;
 }
 
-.header button {
+button {
   width: 100px;
   padding: 8px;
   font-size: 16px;
@@ -81,5 +84,67 @@ export default {
 
 .header p {
   margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .comment {
+    padding: 8px;
+    margin: 0 2% 10px;
+  }
+
+  p {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  hr {
+    margin-bottom: 4px;
+  }
+  
+  span {
+    font-size: 14px;
+  }
+
+  button {
+    width: 80px;
+    padding: 7px;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .header p {
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 425px) {
+  .comment {
+    padding: 6px;
+    margin: 0 2% 8px;
+  }
+
+  p {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  hr {
+    margin-bottom: 3px;
+  }
+  
+  span {
+    font-size: 11px;
+  }
+
+  button {
+    width: 60px;
+    padding: 6px;
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .header p {
+    margin-top: 6px;
+  }
 }
 </style>

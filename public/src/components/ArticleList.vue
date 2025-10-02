@@ -24,6 +24,11 @@
         :article="el"
       />
     </div>
+    <div class="mobileBtns">
+      <button class="circleBtn" @click="isModalOpen = true">＋</button>
+      <button class="circleBtn" @click="upend">⇅</button>
+      <button class="circleBtn" @click="handleAuthClick">⚙</button>
+    </div>
   </section>
 </template>
 
@@ -139,5 +144,43 @@ export default {
 
 .fade-leave-active {
   transition: all 0.3s ease;
+}
+
+.mobileBtns {
+  position: fixed;
+  display: none;
+  top: 140px;
+}
+
+.circleBtn {
+  height: 56px;
+  width: 56px;
+  border-radius: 50%;
+  margin: 5px;
+  font-size: 44px;
+  line-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid black;
+  background-color: rgba(230, 230, 230, 0.7);
+  backdrop-filter: blur(6px);
+  transition: all 300ms ease;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .mobileBtns {
+    display: flex;
+    flex-direction: column;
+  }
+  .stickyContainer {
+    display: none;
+  }
+  .content {
+    gap: 15px;
+    flex: 100%;
+    justify-content: center;
+  }
 }
 </style>

@@ -34,5 +34,20 @@ export default {
 h2 {
   padding: 15px;
   text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
+  word-break: break-word;
+  hyphens: auto;
+}
+@media (max-width: 768px) {
+  h2 {
+    padding: 12px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 425px) {
+  h2 {
+    padding: 8px;
+    font-size: 16px;
+  }
 }
 </style>
