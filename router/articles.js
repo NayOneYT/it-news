@@ -11,11 +11,10 @@ import { Router } from "express";
 import { Articles } from "../models/articles.js";
 import { Comments } from "../models/comments.js";
 import jwt from "jsonwebtoken";
-import path from "path";
-import fs from "fs";
 import multer from 'multer';
+import { storage, cloudinary } from "../utils/cloudinary.js";
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ storage });
 function authAdmin(req, res, next) {
     try {
         const authHeader = req.headers.authorization;
@@ -51,10 +50,16 @@ router.delete("/:id", authAdmin, (req, res) => __awaiter(void 0, void 0, void 0,
         if (!article) {
             return res.status(404).send({ message: "Статья не найдена" });
         }
-        if (article.img != "/img/no-image.jpg") {
-            const imgPath = path.resolve("public/public", "." + article.img);
-            if (fs.existsSync(imgPath)) {
-                fs.unlinkSync(imgPath);
+        if (article.img && !article.img.includes('/img/no-image.jpg')) {
+            try {
+                const urlParts = article.img.split('/');
+                const uploadIndex = urlParts.indexOf('upload');
+                const publicIdWithVersion = urlParts.slice(uploadIndex + 2).join('/');
+                const publicId = publicIdWithVersion.replace(/\.[^/.]+$/, "");
+                yield cloudinary.uploader.destroy(publicId);
+            }
+            catch (cloudinaryErr) {
+                console.error(cloudinaryErr.message);
             }
         }
         yield Articles.findByIdAndDelete(id);
@@ -90,19 +95,10 @@ router.post("/create-by-admin", authAdmin, upload.single('img'), (req, res) => _
             title,
             anons,
             full_text,
-            status: "approved"
+            status: "approved",
+            img: req.file ? req.file.path : "/img/no-image.jpg"
         });
         const savedArticle = yield article.save();
-        if (req.file) {
-            const ext = path.extname(req.file.originalname);
-            const imgPath = path.resolve('public/public/img');
-            const fileName = `${savedArticle._id}${ext}`;
-            const fullPath = path.join(imgPath, fileName);
-            fs.mkdirSync(imgPath, { recursive: true });
-            fs.writeFileSync(fullPath, req.file.buffer);
-            savedArticle.img = `/img/${fileName}`;
-            yield savedArticle.save();
-        }
         res.status(201).send({ savedArticle });
     }
     catch (err) {
@@ -148,19 +144,10 @@ router.post("/create-by-user", upload.single('img'), (req, res) => __awaiter(voi
         const article = new Articles({
             title,
             anons,
-            full_text
+            full_text,
+            img: req.file ? req.file.path : "/img/no-image.jpg"
         });
-        const savedArticle = yield article.save();
-        if (req.file) {
-            const ext = path.extname(req.file.originalname);
-            const imgPath = path.resolve('public/public/img');
-            const fileName = `${savedArticle._id}${ext}`;
-            const fullPath = path.join(imgPath, fileName);
-            fs.mkdirSync(imgPath, { recursive: true });
-            fs.writeFileSync(fullPath, req.file.buffer);
-            savedArticle.img = `/img/${fileName}`;
-            yield savedArticle.save();
-        }
+        yield article.save();
         res.status(201).send({ message: "Статья отправлена на модерацию" });
     }
     catch (err) {

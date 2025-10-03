@@ -11,7 +11,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/articles", ArticlesRouter);
 app.use("/api/comments", CommentsRouter);
 app.use("/api/admin", AdminsRouter);
-app.use("/img", express.static(path.resolve("public/public/img")));
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "public", "dist")));
 app.get(/^(?!\/api).*/, (req, res) => {
