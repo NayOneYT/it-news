@@ -13,7 +13,7 @@
         <InputError :condition="img.errorText != ''" :text="img.errorText"/>
         <button type="submit" :disabled="processing">
           <div v-if="!processing">{{ admin ? "Создать" : "Отправить" }}</div>
-          <div v-else class="loader">Обработка...</div>
+          <div v-else>Обработка...</div>
         </button>
       </form>
       <div v-else-if="blocked">
