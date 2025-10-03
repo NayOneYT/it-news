@@ -160,12 +160,13 @@ export default {
           }
           if (this.admin) {
             const token = localStorage.getItem("token")
-            await axios.post('/api/articles/create-by-admin', formData,
+            const response = await axios.post('/api/articles/create-by-admin', formData,
             {
               headers: {
                 Authorization: `Bearer ${token}`
               }
             })
+            this.$emit("created", response.data)
           }
           else await axios.post('/api/articles/create-by-user', formData)
           this.submitted = true

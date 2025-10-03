@@ -8,6 +8,7 @@
       <CreateArticle
         v-if="isModalOpen"
         @close="isModalOpen = false"
+        @created="onArticleCreated"
         :admin = true
       />
     </transition>
@@ -56,6 +57,9 @@ export default {
     },
     switchToMain() {
       this.$router.push("/").catch(() => {})
+    },
+    async onArticleCreated(newArticle) {
+      this.approvedArticles.push(newArticle)
     }
   }
 }

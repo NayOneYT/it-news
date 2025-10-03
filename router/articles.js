@@ -103,7 +103,7 @@ router.post("/create-by-admin", authAdmin, upload.single('img'), (req, res) => _
             savedArticle.img = `/img/${fileName}`;
             yield savedArticle.save();
         }
-        res.status(201).send({ message: "Статья успешно создана" });
+        res.status(201).send({ savedArticle });
     }
     catch (err) {
         console.error(err);
