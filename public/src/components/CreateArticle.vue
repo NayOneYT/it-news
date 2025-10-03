@@ -11,7 +11,10 @@
         <p>*Правила по написанию HTML кода можно изучить <span @click="readRules">здесь</span></p>
         <input type="file" @change="handleImg" accept="image/*">
         <InputError :condition="img.errorText != ''" :text="img.errorText"/>
-        <button type="submit">{{ admin? "Создать" : "Отправить" }}</button>
+        <button type="submit" :disabled="processing">
+          <div v-if="!processing">{{ admin ? "Создать" : "Отправить" }}</div>
+          <div v-else class="loader">Обработка...</div>
+        </button>
       </form>
       <div v-else-if="blocked">
         <h1>Вы недавно отправили статью.<br>
@@ -57,7 +60,8 @@ export default {
       submitted: false,
       blocked: false,
       cooldown: 60000,
-      remainingTime: 0
+      remainingTime: 0,
+      processing: false
     }
   },
   mounted() {
@@ -151,6 +155,7 @@ export default {
       const fullTextToSend = this.full_text.trim() == '' ? '' : this.full_text
       if (this.title.errorText == "" && this.anons.errorText == "") {
         try {
+          this.processing = true
           const formData = new FormData()
           formData.append('title', formattedTitle)
           formData.append('anons', formattedAnons)
@@ -178,6 +183,7 @@ export default {
             this.remainingTime = this.cooldown / 1000
             this.startCooldownTimer()
           }
+          this.processing = false
         } 
         catch (err) {
           console.error('Ошибка при создании статьи:', err)
@@ -290,6 +296,16 @@ span {
 
 span:hover {
   text-decoration: underline;
+}
+
+button[type="submit"][disabled] {
+  cursor: default;
+  opacity: 0.5;
+}
+
+button[type="submit"][disabled]:hover {
+  transform: none;
+  background-color: #222222;
 }
 
 @media (max-width: 768px) {
