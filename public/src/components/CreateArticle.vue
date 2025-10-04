@@ -65,6 +65,7 @@ export default {
     }
   },
   mounted() {
+    document.body.style.overflow = "hidden"
     if (!this.admin) {
       const lastSuccess = localStorage.getItem("lastSuccess")
       if (lastSuccess) {
@@ -82,53 +83,17 @@ export default {
     if (savedAnons) this.anons.content = savedAnons
     const savedFullText = sessionStorage.getItem("full_text")
     if (savedFullText) this.full_text = savedFullText
-    document.addEventListener('wheel', this.preventScroll, { passive: false })
-    document.addEventListener('keydown', this.preventKeys, { passive: false })
-    document.addEventListener('touchmove', this.preventTouch, { passive: false })
   },
   beforeDestroy() {
+    document.body.style.overflow = ""
     if (this.title.content.trim() != "") sessionStorage.setItem("title", this.title.content) 
     else sessionStorage.removeItem("title")
     if (this.anons.content.trim() != "") sessionStorage.setItem("anons", this.anons.content)
     else sessionStorage.removeItem("anons")
     if (this.full_text.trim() != "") sessionStorage.setItem("full_text", this.full_text)
     else sessionStorage.removeItem("full_text")
-    document.removeEventListener('wheel', this.preventScroll)
-    document.removeEventListener('keydown', this.preventKeys)
-    document.removeEventListener('touchmove', this.preventTouch)
   },
   methods: {
-    preventScroll(e) {
-      const target = e.target
-      if (target.tagName === 'TEXTAREA') {
-        if (target.scrollHeight > target.clientHeight) return
-      }
-      e.preventDefault()
-    },
-    preventKeys(e) {
-      const tag = e.target.tagName
-      const isTextInput = (tag === 'INPUT' || tag === 'TEXTAREA')
-      let keys
-      if (isTextInput) {
-        keys = [33, 34] 
-        // 33 - PageUp, 34 - PageDown
-      }
-      else {
-        keys = [32, 33, 34, 35, 36, 37, 38, 39, 40]
-        // 32 - Space, 33 - PageUp, 34 - PageDown, 35 - End, 36 - Home, 
-        // 37 - ArrowLeft, 38 - ArrowUp, 39 - ArrowRight, 40 - ArrowDown
-      }
-      if (keys.includes(e.keyCode)) {
-          e.preventDefault()
-      }
-    },
-    preventTouch(e) {
-      const target = e.target
-      if (target.tagName === 'TEXTAREA') {
-        if (target.scrollHeight > target.clientHeight) return
-      }
-      e.preventDefault()
-    },
     handleImg(event) {
       const file = event.target.files[0]
       if (!file.type.startsWith('image/')) {

@@ -28,42 +28,20 @@ export default {
     }
   },
   mounted() {
+    document.body.style.overflow = "hidden"
     const savedLogin = sessionStorage.getItem("login")
     if (savedLogin) this.login = savedLogin
     const savedPassword = sessionStorage.getItem("password")
     if (savedPassword) this.password = savedPassword
-    window.addEventListener('wheel', this.preventScroll, { passive: false })
-    window.addEventListener('keydown', this.preventKeys)
   },
   beforeDestroy() {
+    document.body.style.overflow = ""
     if (this.login.trim() != "") sessionStorage.setItem("login", this.login) 
     else sessionStorage.removeItem("login")
     if (this.password.trim() != "") sessionStorage.setItem("password", this.password)
     else sessionStorage.removeItem("password")
-    window.removeEventListener('wheel', this.preventScroll)
-    window.removeEventListener('keydown', this.preventKeys)
   },
   methods: {
-    preventScroll(e) {
-      e.preventDefault()
-    },
-    preventKeys(e) {
-      const tag = e.target.tagName
-      const isTextInput = (tag === 'INPUT')
-      let keys
-      if (isTextInput) {
-        keys = [33, 34] 
-        // 33 - PageUp, 34 - PageDown
-      }
-      else {
-        keys = [32, 33, 34, 35, 36, 37, 38, 39, 40]
-        // 32 - Space, 33 - PageUp, 34 - PageDown, 35 - End, 36 - Home, 
-        // 37 - ArrowLeft, 38 - ArrowUp, 39 - ArrowRight, 40 - ArrowDown
-      }
-      if (keys.includes(e.keyCode)) {
-          e.preventDefault()
-      }
-    },
     async submitAuth() {
       try {
         const res = await axios.post("/api/admin/login", {
