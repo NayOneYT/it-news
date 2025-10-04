@@ -10,8 +10,7 @@ export const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'img',
-        format: 'auto',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp']
+        format: 'auto'
     },
 });
 export { cloudinary };
